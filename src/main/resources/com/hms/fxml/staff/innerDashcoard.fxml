@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.staff.InnerDashboard">
+    <children>
+        <HBox spacing="20.0" style="-fx-background-color: #fbfbfb;">
+            <children>
+                <!-- Total Rooms Panel -->
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="380.0" style="-fx-background-color: #c0c0c0; -fx-border-color: #808080; -fx-border-width: 1;">
+                    <children>
+                        <Label text="Total Rooms" textFill="#002242">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="txtrooms" text="0" textFill="#002242">
+                            <font>
+                                <Font name="System Bold" size="62.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="18.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Pane prefHeight="29.0" prefWidth="380.0" style="-fx-background-color: #d57e7e;">
+                            <VBox.margin>
+                                <Insets top="18.0" />
+                            </VBox.margin>
+                        </Pane>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="29.0" right="29.0" top="26.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Total Students Panel -->
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="390.0" style="-fx-background-color: #c0c0c0; -fx-border-color: #808080; -fx-border-width: 1;">
+                    <children>
+                        <Label text="Total Students" textFill="#002242">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="txtstudent" text="0" textFill="#002242">
+                            <font>
+                                <Font name="System Bold" size="62.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="18.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Pane prefHeight="31.0" prefWidth="390.0" style="-fx-background-color: #7ea6d5;">
+                            <VBox.margin>
+                                <Insets top="17.0" />
+                            </VBox.margin>
+                        </Pane>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="29.0" right="29.0" top="25.0" />
+                    </padding>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="130.0" right="20.0" top="30.0" />
+            </padding>
+        </HBox>
+
+        <!-- Date and Time Panel -->
+        <HBox alignment="CENTER" style="-fx-background-color: #fbfbfb;">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="390.0" style="-fx-background-color: #f3f3f3; -fx-border-color: #808080; -fx-border-width: 1;">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                            <children>
+                                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/calender_icon.png" />
+                                    </image>
+                                </ImageView>
+                                <VBox>
+                                    <children>
+                                        <Label text="Date:" textFill="#002242">
+                                            <font>
+                                                <Font name="System Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="txtdate" text="0" textFill="#002242">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="20.0" top="30.0" />
+                            </VBox.margin>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                            <children>
+                                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/clock_icon.png" />
+                                    </image>
+                                </ImageView>
+                                <VBox>
+                                    <children>
+                                        <Label text="Time:" textFill="#002242">
+                                            <font>
+                                                <Font name="System Bold" size="15.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="txttime" text="0" textFill="#002242">
+                                            <font>
+                                                <Font name="System Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="30.0" />
+                            </VBox.margin>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets left="30.0" right="30.0" />
+                    </padding>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </HBox>
+    </children>
+</VBox>

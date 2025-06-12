@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.Profile">
+    <children>
+        <Pane prefHeight="390" prefWidth="500" style="-fx-background-color: #fbfbfb;">
+            <children>
+                <!-- User Image -->
+                <ImageView fitHeight="80" fitWidth="80" layoutX="40" layoutY="20">
+                    <image>
+                        <Image url="@../../hms/images/user_img.png" />
+                    </image>
+                </ImageView>
+
+                <!-- Welcome Label -->
+                <Text layoutX="140" layoutY="60" style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 24;">
+                    <text>Welcome,</text>
+                </Text>
+
+                <!-- Username Label -->
+                <Text fx:id="username" layoutX="140" layoutY="90" style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 18; -fx-fill: #00a650;">
+                    <text>User</text>
+                </Text>
+
+                <!-- Separator Line -->
+                <Line endX="500" layoutY="120" startX="0" stroke="#cccccc" strokeWidth="1" />
+
+                <!-- Form Fields -->
+                <Text layoutX="70" layoutY="180" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>User ID:</text>
+                </Text>
+                <TextField fx:id="txtuserid" layoutX="140" layoutY="150" prefHeight="30" prefWidth="290" promptText="User ID" editable="false" />
+
+                <Text layoutX="50" layoutY="220" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Username:</text>
+                </Text>
+                <TextField fx:id="txtusername" layoutX="140" layoutY="190" prefHeight="30" prefWidth="290" promptText="Username" />
+
+                <Text layoutX="60" layoutY="260" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Password:</text>
+                </Text>
+                <TextField fx:id="txtpassword" layoutX="140" layoutY="230" prefHeight="30" prefWidth="290" promptText="Password" />
+
+                <Text layoutX="60" layoutY="300" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>User type:</text>
+                </Text>
+                <TextField fx:id="txtusertype" layoutX="140" layoutY="270" prefHeight="30" prefWidth="290" promptText="User Type" editable="false" />
+
+                <!-- Buttons -->
+                <Button fx:id="update_btn" layoutX="220" layoutY="330" mnemonicParsing="false" onAction="#update_btnActionPerformed" prefHeight="38" prefWidth="99" text="Update" />
+                <Button fx:id="clear_btn" layoutX="330" layoutY="330" mnemonicParsing="false" onAction="#clear_btnActionPerformed" prefHeight="38" prefWidth="102" text="Clear" />
+            </children>
+        </Pane>
+    </children>
+</AnchorPane>

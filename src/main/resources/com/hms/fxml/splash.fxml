@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="274.0" prefWidth="746.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.Splash">
+   <children>
+      <ImageView fitHeight="163.0" fitWidth="706.0" layoutX="34.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         
+                  <Image url="@../images/HMS_Logo.png" />
+         <cursor>
+            <Cursor fx:constant="OPEN_HAND" />
+         </cursor>
+
+            </ImageView>
+    <Label fx:id="progressLabel" alignment="CENTER" layoutX="44.0" layoutY="194.0" prefHeight="42.0" prefWidth="54.0" text="0%">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      
+                <Label fx:id="versionLabel" alignment="CENTER" blendMode="DARKEN" layoutX="653.0" layoutY="192.0" prefHeight="42.0" prefWidth="54.0" styleClass="version" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

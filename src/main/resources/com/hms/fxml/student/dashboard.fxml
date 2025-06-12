@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.student.Dashboard">
+    <top>
+        <HBox prefHeight="100.0" prefWidth="1300.0" style="-fx-background-color: white;">
+            <children>
+                <ImageView fitHeight="70.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../images/hms_header.png" />
+                    </image>
+
+                </ImageView>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#handleProfileAction" prefHeight="47.0" prefWidth="146.0" style="-fx-background-color: #00A650; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;" text="Profile">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/profile_icon.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+
+                </Button>
+                <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogoutAction" prefHeight="47.0" prefWidth="144.0" style="-fx-background-color: #EC1D25; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;" text=" Log out">
+                    <graphic>
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../images/logout_icon.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+
+                </Button>
+            </children>
+        </HBox>
+    </top>
+    <left>
+        <VBox prefHeight="560.0" prefWidth="240.0" style="-fx-background-color: #191B52;">
+            <children>
+                <HBox fx:id="btn1" onMouseClicked="#handleDashboardClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #2D3091;">
+                    <children>
+                        <Region fx:id="ind1" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: #2D3091;" />
+                        <Label text=" Dashboard" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/dashboard_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+
+                </HBox>
+                <HBox fx:id="btn2" onMouseClicked="#handleRoomDetailsClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
+                    <children>
+                        <Region fx:id="ind2" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
+                        <Label text=" Room Details" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/room_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox fx:id="btn3" onMouseClicked="#handleRegistrationClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
+                    <children>
+                        <Region fx:id="ind3" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
+                        <Label text=" Registration" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/users_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox fx:id="btn4" onMouseClicked="#handleStudentFeesClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
+                    <children>
+                        <Region fx:id="ind4" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
+                        <Label text=" Student Fees" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/dollar_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox fx:id="btn5" onMouseClicked="#handleHostelRulesClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
+                    <children>
+                        <Region fx:id="ind5" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
+                        <Label text=" Hostel Rules" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/info_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+                <HBox fx:id="btn6" onMouseClicked="#handleHostelContactsClick" prefHeight="43.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
+                    <children>
+                        <Region fx:id="ind6" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
+                        <Label text=" Hostel Contacts" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/contact_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+                <Region VBox.vgrow="ALWAYS" />
+                <HBox onMouseClicked="#handleAboutClick" prefHeight="60.0" prefWidth="240.0" style="-fx-background-color: #0E5651; -fx-cursor: hand;">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="140.0" text="About HMS " textFill="WHITE">
+                            <font>
+                                <Font size="15.0" />
+                            </font>
+                            <graphic>
+                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/uparrow_icon.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+
+                        </Label>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" prefHeight="560.0" prefWidth="1060.0" style="-fx-background-color: #CCCCCC;" />
+    </center>
+</BorderPane>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400" prefWidth="520" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.About">
+    <children>
+        <ImageView fitHeight="188.0" fitWidth="530.0" layoutX="-10.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/about_img.png" />
+            </image>
+        </ImageView>
+        <VBox layoutY="190.0" prefHeight="210.0" prefWidth="520.0" style="-fx-background-color: white;">
+            <children>
+                <Label fx:id="txt_details" prefHeight="60.0" prefWidth="490.0" text="Hostel management system is designed to manage all hostel activities like hostel" wrapText="true">
+                    <font>
+                        <Font name="Tahoma" size="14.0" />
+                    </font>
+
+                </Label>
+                <Label fx:id="jLabel5" text="Developers:" underline="true">
+                    <font>
+                        <Font name="Tahoma Bold" size="14.0" />
+                    </font>
+
+                </Label>
+                <Label fx:id="txt_dev" prefHeight="40.0" prefWidth="480.0" text="Buddhi Rangana, Nadun Hirudika, Kasun Kovida, Deshan Dhananjaya," wrapText="true">
+                    <font>
+                        <Font name="Tahoma" size="14.0" />
+                    </font>
+
+                </Label>
+                <Pane prefHeight="40.0" prefWidth="540.0">
+                    <children>
+                        <Label fx:id="jLabel4" layoutX="29.0" layoutY="13.0" text="Copyright @ 2024 | NIIBS, BSc (Hons.) in IT, 2023/A, Group 02. All rights reserved.">
+                            <font>
+                                <Font name="Tahoma" size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </Pane>
+            </children>
+        </VBox>
+    </children>
+</Pane>

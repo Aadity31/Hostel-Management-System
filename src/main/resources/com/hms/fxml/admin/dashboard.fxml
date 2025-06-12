@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="624.0" prefWidth="920.0" style="-fx-font-family: 'Segoe UI';" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.admin.Dashboard">
+    <top>
+        <!-- Header Panel -->
+        <HBox alignment="CENTER_LEFT" prefHeight="171.0" prefWidth="886.0" style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-spacing: 20; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+         <ImageView fitHeight="130.0" fitWidth="556.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../../images/hms_header.png" />
+            </image>
+         </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#handleProfileAction" style="-fx-background-color: #00A650; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand; -fx-spacing: 10;" text="Profile">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                          <Image url="@../../images/profile_icon.png" />
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogoutAction" style="-fx-background-color: #EC1D25; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 10 20; -fx-background-radius: 5; -fx-cursor: hand; -fx-spacing: 10;" text="Log out">
+                <graphic>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../../images/logout_icon.png" />
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+    </top>
+    <left>
+        <!-- Sidebar Panel -->
+        <VBox prefWidth="240.0" style="-fx-background-color: #191B52; -fx-spacing: 0;" BorderPane.alignment="CENTER">
+            <!-- Dashboard Button -->
+            <HBox fx:id="btnDashboard" alignment="CENTER_LEFT" onMouseClicked="#handleDashboardClick" style="-fx-background-color: #2D3091; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: #FFFFFF; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../../images/dashboard_icon.png" />
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Dashboard">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <!-- Manage Rooms Button -->
+            <HBox fx:id="btnRooms" alignment="CENTER_LEFT" onMouseClicked="#handleRoomsClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../../images/room_icon.png" />
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Manage Rooms">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <!-- Manage Student Button -->
+            <HBox fx:id="btnStudent" alignment="CENTER_LEFT" onMouseClicked="#handleStudentClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../../images/users_icon.png" />
+                  </image></ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Manage Student">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <!-- Student Fees Button -->
+            <HBox fx:id="btnFees" alignment="CENTER_LEFT" onMouseClicked="#handleFeesClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                <Region prefWidth="35.0" />
+                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/dollar_icon.png" />
+               </image></ImageView>
+                <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Student Fees">
+                    <font>
+                        <Font name="Segoe UI Bold" size="18.0" />
+                    </font>
+                </Label>
+            </HBox>
+
+            <!-- All Student Living Button -->
+            <HBox fx:id="btnAllStudent" alignment="CENTER_LEFT" onMouseClicked="#handleAllStudentClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/users_icon.png" />
+                        </image>
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" All Student Living">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <!-- Manage Staff Button -->
+            <HBox fx:id="btnStaff" alignment="CENTER_LEFT" onMouseClicked="#handleStaffClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/users_icon.png" />
+                        </image>
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Manage Staff">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <!-- Activity Log Button -->
+            <HBox fx:id="btnActivity" alignment="CENTER_LEFT" onMouseClicked="#handleActivityClick" style="-fx-background-color: #191B52; -fx-padding: 12 0; -fx-cursor: hand; -fx-spacing: 0; -fx-pref-height: 50;">
+                <children>
+                    <Region prefWidth="3.0" style="-fx-background-color: transparent; -fx-pref-width: 3; -fx-pref-height: 43;" />
+                    <Region prefWidth="35.0" />
+                    <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/activitylog_icon.png" />
+                        </image>
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text=" Activity Log">
+                        <font>
+                            <Font name="Segoe UI Bold" size="18.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- About HMS Button -->
+            <HBox alignment="CENTER" onMouseClicked="#handleAboutClick" style="-fx-background-color: #0E5651; -fx-padding: 15; -fx-cursor: hand; -fx-spacing: 10;">
+                <children>
+                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../images/uparrow_icon.png" />
+                        </image>
+                    </ImageView>
+                    <Label style="-fx-text-fill: white; -fx-font-size: 15px;" text="About HMS">
+                        <font>
+                            <Font name="Segoe UI" size="15.0" />
+                        </font>
+                    </Label>
+                </children>
+            </HBox>
+        </VBox>
+    </left>
+    <center>
+        <!-- Main Content Area -->
+        <StackPane fx:id="contentArea" prefHeight="403.0" prefWidth="615.0" style="-fx-background-color: #CCCCCC;" BorderPane.alignment="CENTER" />
+    </center>
+</BorderPane>

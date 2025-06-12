@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="558.0" prefWidth="1000" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.auth.Signup">
+
+    <left>
+        <!-- Left side image -->
+        <StackPane alignment="CENTER_LEFT" prefHeight="600.0" prefWidth="486.0" BorderPane.alignment="CENTER">
+            <ImageView fitHeight="613.0" fitWidth="488.0" preserveRatio="true">
+            <image>
+               <Image url="@../images/Login_Img.png" />
+            </image></ImageView>
+        </StackPane>
+    </left>
+
+    <center>
+      <StackPane alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+         <children>
+              <!-- Main content container -->
+              <VBox alignment="TOP_CENTER" maxWidth="600" prefWidth="300" spacing="20" style="-fx-background-color: white;">
+      
+                  <!-- Title -->
+                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="89.0" prefWidth="494.0" style="-fx-text-fill: #2d3091; -fx-font-size: 26; -fx-font-weight: bold;" text="New User Registration" />
+                     <!-- Form container -->
+                     <VBox alignment="CENTER_LEFT" prefHeight="491.0" prefWidth="512.0" spacing="5" style="-fx-padding: 0 50;">
+                  <VBox prefHeight="85.0" prefWidth="411.0">
+                     <children>
+               
+                                           <!-- Username field -->
+                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Username" />
+                               <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="314.0" spacing="10">
+                                   <TextField fx:id="txtUsername" promptText="Username" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+                                   <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/user_icon.png" />
+                                 </image>
+                              </ImageView>
+                               </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="86.0" prefWidth="411.0">
+                     <children>
+   
+                                        <!-- Password field -->
+                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Password" />
+                               <HBox alignment="CENTER_LEFT" spacing="10">
+                                   <PasswordField fx:id="txtPassword" promptText="Password" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+
+                                   <TextField fx:id="txtVisiblePassword" promptText="Password" focusTraversable="false" visible="false" managed="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+
+                                   <StackPane prefHeight="30" prefWidth="30" style="-fx-cursor: hand;">
+                                       <ImageView fx:id="showPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleShowPassword" preserveRatio="true">
+                                    <image>
+                                       <Image url="@../images/eye_icon.png" />
+                                    </image>
+                                 </ImageView>
+                                       <ImageView fx:id="hidePasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleHidePassword" preserveRatio="true" visible="false">
+                                    <image>
+                                       <Image url="@../images/invisible_icon.png" />
+                                    </image>
+                                 </ImageView>
+                                   </StackPane>
+                               </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="89.0" prefWidth="411.0">
+                     <children>
+               
+                                           <!-- Confirm Password field -->
+                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Confirm password" />
+                               <HBox alignment="CENTER_LEFT" spacing="10">
+                                   <PasswordField fx:id="txtComPassword" promptText="Confirm Password" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+
+                                   <TextField fx:id="txtVisibleComPassword" promptText="Confirm Password" focusTraversable="false" visible="false" managed="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+
+                                   <StackPane prefHeight="30" prefWidth="30" style="-fx-cursor: hand;">
+                                       <ImageView fx:id="showComPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleShowComPassword" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/eye_icon.png" />
+                                            </image>
+                                       </ImageView>
+
+                                       <ImageView fx:id="hideComPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleHideComPassword" preserveRatio="true" visible="false">
+                                            <image>
+                                                <Image url="@../images/invisible_icon.png" />
+                                            </image>
+                                       </ImageView>
+                                   </StackPane>
+                               </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="83.0" prefWidth="411.0">
+                     <children>
+               
+                                           <!-- User type dropdown -->
+                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="User type" />
+                               <HBox alignment="CENTER_LEFT" spacing="10">
+                                   <ComboBox fx:id="combUserType" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-cursor: hand;">
+
+                                   </ComboBox>
+                                   <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/usertype_icon.png" />
+                                 </image>
+                              </ImageView>
+                               </HBox>
+                     </children>
+                  </VBox>
+         
+                                     <!-- Register button -->
+                         <Button fx:id="btnRegister" onAction="#handleRegister" focusTraversable="false" style="-fx-background-color: #00a650; -fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold; -fx-pref-height: 49; -fx-max-width: Infinity; -fx-pref-width: 100%; -fx-cursor: hand;" text="Sign up" />
+         
+                                     <!-- Back to login link -->
+                         <HBox alignment="CENTER" spacing="5">
+                             <ImageView fx:id="backIcon" fitHeight="20" fitWidth="20" onMouseClicked="#handleBackToLogin" preserveRatio="true" style="-fx-cursor: hand;">
+                           <image>
+                              <Image url="@../images/back_icon.png" />
+                           </image>
+                        </ImageView>
+                             <Label onMouseClicked="#handleBackToLogin" style="-fx-text-fill: #999999; -fx-font-size: 15; -fx-cursor: hand;" text="Back to sign in" />
+                         </HBox>
+                     </VBox>
+              </VBox>
+
+         </children>
+      </StackPane>
+    </center>
+</BorderPane>

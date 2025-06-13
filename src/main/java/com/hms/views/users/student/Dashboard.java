@@ -7,6 +7,7 @@ import com.hms.views.About;
 import com.hms.views.Profile;
 import com.hms.views.auth.Login;
 import com.hms.views.users.staff.InnerDashboard;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,7 +43,7 @@ import java.util.GregorianCalendar;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class Dashboard implements Initializable {
+public class Dashboard extends Application implements Initializable {
 
     @FXML private Button btnProfile;
     @FXML private Button btnLogout;
@@ -64,6 +65,23 @@ public class Dashboard implements Initializable {
 
         // Load initial dashboard content
         loadDashboardContent();
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/student/dashboard.fxml"));
+//        loader.setController(this);
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root, 1300, 660);
+
+        primaryStage.setTitle("HMS Dashboard");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+
+        // Center the window
+        primaryStage.centerOnScreen();
     }
 
     @FXML
@@ -160,6 +178,8 @@ public class Dashboard implements Initializable {
             showAlert("Error", "Could not open about: " + e.getMessage());
         }
     }
+
+
 
     private void setActiveButton(HBox activeButton, Region activeIndicator) {
         // Reset all buttons
@@ -285,6 +305,11 @@ public class Dashboard implements Initializable {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern(format));
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+
     // Cleanup method to close database connections
     public void cleanup() {
         try {
@@ -296,3 +321,4 @@ public class Dashboard implements Initializable {
         }
     }
 }
+

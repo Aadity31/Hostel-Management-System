@@ -13,7 +13,7 @@ module com.hms {
 
     // SQL dependencies
     requires java.sql;
-    requires mysql.connector.j;
+//    requires mysql.connector.j;
     requires itextpdf;
     requires org.apache.poi.ooxml;
     requires java.desktop;

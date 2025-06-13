@@ -70,7 +70,7 @@ public class Rooms implements Initializable {
 
         // Load data
         availableRooms();
-        filledRooms();
+//        filledRooms();
         updateTable();
 
         // Start time updates
@@ -126,20 +126,20 @@ public class Rooms implements Initializable {
         }
     }
 
-    public void filledRooms() {
-        try {
-            pst = conn.prepareStatement("SELECT COUNT(*) AS FilledRooms FROM rooms WHERE Room_status = 'Full'");
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt("FilledRooms");
-                txtfilled.setText(String.valueOf(count));
-            }
-        } catch (SQLException ex) {
-            showAlert("Database Error", "Error fetching filled rooms: " + ex.getMessage());
-        } finally {
-            closeResources();
-        }
-    }
+//    public void filledRooms() {
+//        try {
+//            pst = conn.prepareStatement("SELECT COUNT(*) AS FilledRooms FROM rooms WHERE Room_status = 'Full'");
+//            rs = pst.executeQuery();
+//            if (rs.next()) {
+//                int count = rs.getInt("FilledRooms");
+//                txtfilled.setText(String.valueOf(count));
+//            }
+//        } catch (SQLException ex) {
+//            showAlert("Database Error", "Error fetching filled rooms: " + ex.getMessage());
+//        } finally {
+//            closeResources();
+//        }
+//    }
 
     private void updateTable() {
         try {

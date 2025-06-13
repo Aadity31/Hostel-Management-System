@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.student.Rooms">
+    <children>
+        <VBox prefHeight="600.0" prefWidth="1063.0" style="-fx-background-color: #fbfbfb;">
+            <children>
+                <HBox alignment="CENTER" prefHeight="200.0" prefWidth="1063.0" spacing="20.0">
+                    <children>
+                        <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="420.0" style="-fx-background-color: #f3f3f3; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                            <children>
+                                <Label text="Available Rooms">
+                                    <font>
+                                        <Font name="Tahoma Bold" size="24.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="txtavailable" text="0">
+                                    <font>
+                                        <Font name="Tahoma Bold" size="62.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets top="18.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <VBox prefHeight="31.0" prefWidth="490.0" style="-fx-background-color: #7eb699;">
+                                    <VBox.margin>
+                                        <Insets top="18.0" />
+                                    </VBox.margin>
+                                </VBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="29.0" right="29.0" top="26.0" />
+                            </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="420.0" style="-fx-background-color: #f3f3f3; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                            <children>
+                                <Label text="Filled Rooms">
+                                    <font>
+                                        <Font name="Tahoma Bold" size="24.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="txtfilled" text="0">
+                                    <font>
+                                        <Font name="Tahoma Bold" size="62.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets top="18.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <VBox prefHeight="31.0" prefWidth="500.0" style="-fx-background-color: #d57e7e;">
+                                    <VBox.margin>
+                                        <Insets top="17.0" />
+                                    </VBox.margin>
+                                </VBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="29.0" right="29.0" top="25.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                    </padding>
+                </HBox>
+                <VBox prefHeight="280.0" prefWidth="1060.0" style="-fx-background-color: #fbfbfb; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                    <children>
+                        <Label text="Room Details">
+                            <font>
+                                <Font name="Tahoma" size="18.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" left="10.0" top="10.0" />
+                            </VBox.margin>
+                        </Label>
+                        <TableView fx:id="room_table" prefHeight="220.0" prefWidth="970.0">
+                            <columns>
+                                <TableColumn fx:id="roomIdColumn" prefWidth="150.0" text="Room ID" />
+                                <TableColumn fx:id="roomTypeColumn" prefWidth="200.0" text="Room Type" />
+                                <TableColumn fx:id="capacityColumn" prefWidth="150.0" text="Capacity" />
+                                <TableColumn fx:id="facilityColumn" prefWidth="250.0" text="Facility" />
+                                <TableColumn fx:id="roomStatusColumn" prefWidth="220.0" text="Room Status" />
+                            </columns>
+                        </TableView>
+                    </children>
+                    <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="8.0" />
+                    </padding>
+                </VBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

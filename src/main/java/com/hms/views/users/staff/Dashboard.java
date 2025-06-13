@@ -2,6 +2,7 @@ package com.hms.views.users.staff;
 
 import com.hms.utils.DB;
 import com.hms.utils.Emp;
+import com.hms.views.auth.Login;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -21,6 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -113,29 +116,29 @@ public class Dashboard extends Application implements Initializable {
         }
     }
 
-
     @FXML
     private void handleLogoutAction() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Logout");
-        alert.setHeaderText("Are you sure you want to logout?");
-        alert.setContentText("This will end your current session.");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to logout?");
 
         Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                // Log the logout activity
+                logActivity("Logged out");
 
-        try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/hms/fxml/login.fxml")));
+                // Close current window and open login
+                Stage currentStage = (Stage) btnLogout.getScene().getWindow();
+                currentStage.close();
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Login");
-            // Close current window
-            ((Stage) btnLogout.getScene().getWindow()).close();
-            stage.show();
+                // Open login window
+                openLoginWindow();
 
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                showAlert("Error", "Logout failed: " + e.getMessage());
+            }
         }
     }
 
@@ -214,15 +217,14 @@ public class Dashboard extends Application implements Initializable {
         try {
             desktopPane.getChildren().clear();
             // Load inner dashboard content
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/staff/InnerDashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/staff/innerDashboard.fxml"));
             Parent dashboardRoot = loader.load();
 
             // You can create Inner_Dashboard as a JavaFX component or load FXML
             InnerDashboard dashboard = new InnerDashboard();
             // Convert Swing component to JavaFX if needed, or create new JavaFX version
             desktopPane.getChildren().add(dashboardRoot);
-            // For now, we'll just show a placeholder
-            loadContentPlaceholder("Dashboard Content");
+
         } catch (Exception e) {
             showErrorAlert("Error loading dashboard", e.getMessage());
         }
@@ -275,7 +277,7 @@ public class Dashboard extends Application implements Initializable {
         desktopPane.getChildren().add(label);
     }
 
-    private void logUserAction(String action) {
+    private void logActivity(String action) {
         try {
             Date currentDate = GregorianCalendar.getInstance().getTime();
             DateFormat df = DateFormat.getDateInstance();
@@ -304,9 +306,32 @@ public class Dashboard extends Application implements Initializable {
         }
     }
 
-//    private void openLoginWindow() {
-//
-//    }
+    private void openLoginWindow() {
+        try {
+            // Try to load JavaFX Login window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/login.fxml"));
+            Parent loginRoot = loader.load();
+
+            Stage loginStage = new Stage();
+            loginStage.setTitle("Login");
+            loginStage.setScene(new Scene(loginRoot));
+
+            InputStream iconStream = getClass().getResourceAsStream("/com/hms/images/HMS.png");
+            if (iconStream != null) {
+                loginStage.getIcons().add(new Image(iconStream));
+            } else {
+                System.err.println("⚠️ HMS.png icon not found at /com/hms/images/HMS.png");
+            }
+
+            loginStage.show();
+        } catch (IOException e) {
+            // Fallback to Swing login if JavaFX version doesn't exist
+            Platform.runLater(() -> {
+                Login loginFrame = new Login();
+//                loginFrame.setVisible(true);
+            });
+        }
+    }
 
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

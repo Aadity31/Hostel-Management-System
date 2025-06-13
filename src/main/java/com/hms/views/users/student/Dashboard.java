@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -26,6 +27,7 @@ import javafx.stage.Stage;
 import org.apache.poi.ss.formula.functions.DVar;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -201,7 +203,7 @@ public class Dashboard implements Initializable {
 
     private void loadContent(String contentType) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/hms/student/" + contentType + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/student/" + contentType + ".fxml"));
             Node content = loader.load();
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
@@ -247,12 +249,20 @@ public class Dashboard implements Initializable {
     private void openLoginWindow() {
         try {
             // Try to load JavaFX Login window
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/hms/Login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hms/fxml/login.fxml"));
             Parent loginRoot = loader.load();
 
             Stage loginStage = new Stage();
-            loginStage.setTitle("HMS Login");
+            loginStage.setTitle("Login");
             loginStage.setScene(new Scene(loginRoot));
+
+            InputStream iconStream = getClass().getResourceAsStream("/com/hms/images/HMS.png");
+            if (iconStream != null) {
+                loginStage.getIcons().add(new Image(iconStream));
+            } else {
+                System.err.println("⚠️ HMS.png icon not found at /com/hms/images/HMS.png");
+            }
+
             loginStage.show();
         } catch (IOException e) {
             // Fallback to Swing login if JavaFX version doesn't exist

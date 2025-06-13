@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.student.Rules">
+    <children>
+        <VBox prefHeight="600.0" prefWidth="1050.0" style="-fx-background-color: #fbfbfb;">
+            <children>
+                <TitledPane animated="false" collapsible="false" prefHeight="580.0" prefWidth="1050.0" text="Hostel Rules">
+                    <content>
+                        <ScrollPane fitToWidth="true" prefHeight="540.0" prefWidth="1020.0" style="-fx-background-color: transparent;">
+                            <content>
+                                <TextArea fx:id="rulesTextArea" editable="false" prefHeight="520.0" prefWidth="1000.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" wrapText="true">
+                                    <font>
+                                        <Font name="Tahoma" size="13.0" />
+                                    </font>
+                                </TextArea>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                    <font>
+                        <Font name="Tahoma" size="18.0" />
+                    </font>
+                </TitledPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

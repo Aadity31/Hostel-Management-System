@@ -1,100 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.student.Rooms">
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.student.Rooms">
     <children>
-        <VBox prefHeight="600.0" prefWidth="1063.0" style="-fx-background-color: #fbfbfb;">
+        <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <children>
-                <HBox alignment="CENTER" prefHeight="200.0" prefWidth="1063.0" spacing="20.0">
+                <!-- Header Section -->
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
                     <children>
-                        <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="420.0" style="-fx-background-color: #f3f3f3; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                        <Label text="Hostel &amp; Room Management">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <VBox alignment="CENTER" spacing="5.0">
                             <children>
-                                <Label text="Available Rooms">
+                                <Label text="Available Rooms" />
+                                <Label fx:id="txtavailable" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 5px 10px; -fx-background-radius: 5px;" text="0">
                                     <font>
-                                        <Font name="Tahoma Bold" size="24.0" />
+                                        <Font name="System Bold" size="18.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="txtavailable" text="0">
-                                    <font>
-                                        <Font name="Tahoma Bold" size="62.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets top="18.0" />
-                                    </VBox.margin>
-                                </Label>
-                                <VBox prefHeight="31.0" prefWidth="490.0" style="-fx-background-color: #7eb699;">
-                                    <VBox.margin>
-                                        <Insets top="18.0" />
-                                    </VBox.margin>
-                                </VBox>
                             </children>
-                            <padding>
-                                <Insets bottom="10.0" left="29.0" right="29.0" top="26.0" />
-                            </padding>
                         </VBox>
-                        <VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="420.0" style="-fx-background-color: #f3f3f3; -fx-border-color: #cccccc; -fx-border-width: 1;">
+                        <VBox alignment="CENTER" spacing="5.0">
                             <children>
-                                <Label text="Filled Rooms">
+                                <Label text="Filled Rooms" />
+                                <Label fx:id="txtfilled" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 5px 10px; -fx-background-radius: 5px;" text="0">
                                     <font>
-                                        <Font name="Tahoma Bold" size="24.0" />
+                                        <Font name="System Bold" size="18.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="txtfilled" text="0">
-                                    <font>
-                                        <Font name="Tahoma Bold" size="62.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets top="18.0" />
-                                    </VBox.margin>
-                                </Label>
-                                <VBox prefHeight="31.0" prefWidth="500.0" style="-fx-background-color: #d57e7e;">
-                                    <VBox.margin>
-                                        <Insets top="17.0" />
-                                    </VBox.margin>
-                                </VBox>
                             </children>
-                            <padding>
-                                <Insets bottom="10.0" left="29.0" right="29.0" top="25.0" />
-                            </padding>
                         </VBox>
                     </children>
                     <padding>
-                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                        <Insets bottom="10.0" />
                     </padding>
                 </HBox>
-                <VBox prefHeight="280.0" prefWidth="1060.0" style="-fx-background-color: #fbfbfb; -fx-border-color: #cccccc; -fx-border-width: 1;">
+
+                <!-- Hostels Section -->
+                <VBox spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2">
                     <children>
-                        <Label text="Room Details">
+                        <Label text="Select a Hostel">
                             <font>
-                                <Font name="Tahoma" size="18.0" />
+                                <Font name="System Bold" size="18.0" />
                             </font>
-                            <VBox.margin>
-                                <Insets bottom="10.0" left="10.0" top="10.0" />
-                            </VBox.margin>
                         </Label>
-                        <TableView fx:id="room_table" prefHeight="220.0" prefWidth="970.0">
-                            <columns>
-                                <TableColumn fx:id="roomIdColumn" prefWidth="150.0" text="Room ID" />
-                                <TableColumn fx:id="roomTypeColumn" prefWidth="200.0" text="Room Type" />
-                                <TableColumn fx:id="capacityColumn" prefWidth="150.0" text="Capacity" />
-                                <TableColumn fx:id="facilityColumn" prefWidth="250.0" text="Facility" />
-                                <TableColumn fx:id="roomStatusColumn" prefWidth="220.0" text="Room Status" />
-                            </columns>
+                        <TableView fx:id="hostel_table" prefHeight="250.0"> <columns>
+                            <TableColumn fx:id="hostelIdColumn" text="Hostel ID" />
+                            <TableColumn fx:id="hostelNameColumn" prefWidth="150.0" text="Hostel Name" />
+                            <TableColumn fx:id="hostelLocationColumn" prefWidth="120.0" text="Location" />
+                            <TableColumn fx:id="totalRoomsColumn" prefWidth="100.0" text="Total Rooms" />      <TableColumn fx:id="availableRoomsColumn" prefWidth="120.0" text="Available Rooms" /> <TableColumn fx:id="hostelTypeColumn" prefWidth="100.0" text="Type" />
+
+                            <TableColumn fx:id="contactPersonColumn" prefWidth="140.0" text="Contact Person" />
+                            <TableColumn fx:id="contactNumberColumn" prefWidth="120.0" text="Contact Number" />
+                            <TableColumn fx:id="emailColumn" prefWidth="180.0" text="Email" />
+                            <TableColumn fx:id="descriptionColumn" prefWidth="200.0" text="Description" />
+                        </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
                         </TableView>
                     </children>
-                    <padding>
-                        <Insets bottom="16.0" left="16.0" right="16.0" top="8.0" />
-                    </padding>
+                </VBox>
+
+                <!-- Rooms Section -->
+                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Room Details">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="selectedHostelLabel" style="-fx-text-fill: #666666;" text="Select a hostel to view rooms">
+                                    <font>
+                                        <Font name="System Italic" size="14.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+                        <TableView fx:id="room_table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="roomIdColumn" text="Room ID" />
+                                <TableColumn fx:id="roomTypeColumn" prefWidth="100.0" text="Room Type" />
+                                <TableColumn fx:id="capacityColumn" text="Capacity" />
+                                <TableColumn fx:id="currentOccupantsColumn" prefWidth="120.0" text="Current Occupants" />
+                                <TableColumn fx:id="facilityColumn" prefWidth="150.0" text="Facilities" />
+                                <TableColumn fx:id="monthlyRentColumn" prefWidth="100.0" text="Monthly Rent (₹)" />
+                                <TableColumn fx:id="roomStatusColumn" prefWidth="100.0" text="Status" />
+                                <TableColumn fx:id="applyActionColumn" prefWidth="100.0" text="Action" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </children>
                 </VBox>
             </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
         </VBox>
     </children>
 </AnchorPane>

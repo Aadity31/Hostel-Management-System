@@ -12,10 +12,10 @@ public class DB {
     public static Connection connect() {
         Connection conn = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Important line
+            Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://localhost:3306/hms";
             String user = "root";
-            String password = ""; // Agar password hai to woh daalo
+            String password = "";
             conn = DriverManager.getConnection(url, user, password);
             System.out.println("Connected to database successfully.");
         } catch (Exception e) {

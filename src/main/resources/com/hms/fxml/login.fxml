@@ -30,7 +30,7 @@
       </StackPane>
     </left>
    <right>
-        <VBox alignment="CENTER" maxWidth="600" prefWidth="0.0" spacing="20" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+        <VBox alignment="CENTER" maxWidth="600" prefWidth="0.0" spacing="20" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
             <!-- Logo with responsive size -->
          <StackPane>
             <children>

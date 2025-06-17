@@ -55,7 +55,7 @@ public class Contact implements Initializable {
             Date d = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
             String time = sdf.format(d);
-            System.out.println("Current Time: " + time); // For debugging
+//            System.out.println("Current Time: " + time); // For debugging
 
             // If you have a time label in FXML, uncomment the line below:
             // if (timeLabel != null) timeLabel.setText(time);

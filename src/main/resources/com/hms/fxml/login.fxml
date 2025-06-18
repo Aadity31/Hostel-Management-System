@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-
 <?import java.net.URL?>
-<StackPane xmlns="http://javafx.com/javafx/23.0.1"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.hms.views.auth.Login">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.auth.Login">
 
     <stylesheets>
         <URL value="@../css_styles/signup.css" />
@@ -23,75 +29,105 @@
         </ImageView>
 
         <!-- Overlay background (optional) -->
-        <VBox style="-fx-background-color: rgba(0, 0, 0, 0.5);" />
+        <VBox alignment="CENTER" style="-fx-background-color: rgba(0, 0, 0, 0.5);" />
+
+        <VBox alignment="CENTER" spacing="0.0">
+            <children>
+                <!-- Centered Signup Form -->
+                <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <content>
+                        <VBox alignment="CENTER" style="-fx-alignment: center;" styleClass="form-wrapper">
+                            <children>
+                                <VBox alignment="CENTER" maxWidth="500.0" minWidth="450.0" prefHeight="539.0" prefWidth="500.0" styleClass="form-container">
+                                    <!-- Logo -->
+                                    <ImageView fitHeight="110.0" fitWidth="350.0" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../images/hms_header.png" />
+                                        </image>
+                                    </ImageView>
+
+                                    <!-- Username Field -->
+                                    <VBox spacing="5.0">
+                                        <Label styleClass="field-label" text="Username" />
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <TextField fx:id="txtUsername" prefWidth="418.0" promptText="Enter username" styleClass="custom-text-field" />
+                                            <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../images/user_icon.png" />
+                                                </image>
+                                            </ImageView>
+                                        </HBox>
+                              <VBox.margin>
+                                 <Insets bottom="12.0" />
+                              </VBox.margin>
+                                    </VBox>
+
+                                    <!-- Password Field -->
+                                    <VBox spacing="5">
+                                        <Label styleClass="field-label" text="Password" />
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <StackPane>
+                                                <children>
+                                                    <PasswordField fx:id="txtPassword" prefWidth="380.0" promptText="Password" styleClass="custom-text-field" />
+                                                    <TextField fx:id="txtVisiblePassword" managed="false" prefWidth="380.0" promptText="Password" styleClass="custom-text-field" visible="false" />
+                                                </children>
+                                            </StackPane>
+                                            <ImageView fx:id="showPasswordIcon" fitHeight="24.0" fitWidth="24.0" onMouseClicked="#handleShowPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                <image>
+                                                    <Image url="@../images/eye_icon.png" />
+                                                </image>
+                                            </ImageView>
+
+                                            <ImageView fx:id="hidePasswordIcon" fitHeight="24.0" fitWidth="24.0" managed="false" onMouseClicked="#handleHidePassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon" visible="false">
+                                                <image>
+                                                    <Image url="@../images/invisible_icon.png" />
+                                                </image>
+                                            </ImageView>
+                                        </HBox>
+                              <VBox.margin>
+                                 <Insets bottom="12.0" />
+                              </VBox.margin>
+                                    </VBox>
+
+                                    <!-- User Type ComboBox -->
+                                    <VBox spacing="5">
+                                        <Label styleClass="field-label" text="User Type" />
+                                        <HBox spacing="10">
+                                            <ComboBox fx:id="combUserType" prefWidth="430.0" promptText="Select user type" styleClass="custom-combo-box">
+                                    <HBox.margin>
+                                       <Insets bottom="12.0" />
+                                    </HBox.margin></ComboBox>
+                                            <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@../images/usertype_icon.png" />
+                                                </image>
+                                            </ImageView>
+                                        </HBox>
+                                    </VBox>
+
+                                    <!-- Login Button -->
+                                    <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="31.0" prefWidth="413.0" styleClass="register-button" text="Log In">
+                              <VBox.margin>
+                                 <Insets top="39.0" />
+                              </VBox.margin></Button>
+
+                                    <!-- Sign Up Link -->
+                                    <HBox alignment="CENTER" spacing="8.0">
+                                        <Label styleClass="field-label" text="Don't have an account?" />
+                                        <Label fx:id="signUpLabel" onMouseClicked="#handleSignUp" styleClass="login-link" text="Sign Up" />
+                              <VBox.margin>
+                                 <Insets top="30.0" />
+                              </VBox.margin>
+                                    </HBox>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
 
         <!-- Centered Login Form -->
-        <VBox fx:id="loginFormContainer" alignment="CENTER" spacing="20" styleClass="form-container" StackPane.alignment="CENTER" maxWidth="400" prefWidth="400" >
 
-            <!-- Logo -->
-            <ImageView fitHeight="100" fitWidth="250" preserveRatio="true">
-                <image>
-                    <Image url="@../images/hms_header.png" />
-                </image>
-            </ImageView>
-
-            <!-- Username Field -->
-            <VBox spacing="5">
-                <Label text="Username" styleClass="field-label"/>
-                <HBox spacing="10">
-                    <TextField fx:id="txtUsername" promptText="Enter username" styleClass="custom-text-field" prefWidth="250" />
-                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
-                        <image>
-                            <Image url="@../images/user_icon.png" />
-                        </image>
-                    </ImageView>
-                </HBox>
-            </VBox>
-
-            <!-- Password Field -->
-            <VBox spacing="5">
-                <Label text="Password" styleClass="field-label"/>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <StackPane>
-                        <children>
-                            <PasswordField fx:id="txtPassword" promptText="Password" styleClass="custom-text-field" prefWidth="250"/>
-                            <TextField fx:id="txtVisiblePassword" visible="false" managed="false" promptText="Password" styleClass="custom-text-field" prefWidth="250" focusTraversable="false"/>
-                        </children>
-                    </StackPane>
-                    <ImageView fx:id="showPasswordIcon" onMouseClicked="#handleShowPassword" fitHeight="20" fitWidth="20" styleClass="password-icon">
-                        <image>
-                            <Image url="@../images/eye_icon.png" />
-                        </image>
-                    </ImageView>
-                    <ImageView fx:id="hidePasswordIcon" onMouseClicked="#handleHidePassword" fitHeight="20" fitWidth="20" visible="false" styleClass="password-icon">
-                        <image>
-                            <Image url="@../images/invisible_icon.png" />
-                        </image>
-                    </ImageView>
-                </HBox>
-            </VBox>
-
-            <!-- User Type ComboBox -->
-            <VBox spacing="5">
-                <Label text="User Type" styleClass="field-label"/>
-                <HBox spacing="10">
-                    <ComboBox fx:id="combUserType" promptText="Select user type" styleClass="custom-combo-box" prefWidth="250"/>
-                    <ImageView fitHeight="24" fitWidth="24" preserveRatio="true">
-                        <image>
-                            <Image url="@../images/usertype_icon.png"/>
-                        </image>
-                    </ImageView>
-                </HBox>
-            </VBox>
-
-            <!-- Login Button -->
-            <Button fx:id="btnLogin" text="Log In" onAction="#handleLogin" styleClass="register-button" prefWidth="250"/>
-
-            <!-- Sign Up Link -->
-            <HBox alignment="CENTER" spacing="5">
-                <Label text="Don't have an account?" styleClass="field-label"/>
-                <Label fx:id="signUpLabel" text="Sign Up" onMouseClicked="#handleSignUp" styleClass="login-link"/>
-            </HBox>
-        </VBox>
     </children>
 </StackPane>

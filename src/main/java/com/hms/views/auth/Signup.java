@@ -36,7 +36,6 @@ public class Signup {
     @FXML private TextField txtVisiblePassword;
     @FXML private TextField txtVisibleComPassword;
     @FXML private Button btnRegister;
-    @FXML private ImageView backIcon;
     @FXML private ImageView showPasswordIcon;
     @FXML private ImageView hidePasswordIcon;
     @FXML private ImageView showComPasswordIcon;
@@ -321,7 +320,7 @@ public class Signup {
             stage.show();
 
             // Close current window
-            ((Stage) backIcon.getScene().getWindow()).close();
+            ((Stage) linkBackToLogin.getScene().getWindow()).close();
         } catch (IOException e) {
             e.printStackTrace();
         }

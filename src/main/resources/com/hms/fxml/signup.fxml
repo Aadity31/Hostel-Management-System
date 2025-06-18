@@ -1,140 +1,284 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="558.0" prefWidth="1000" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.auth.Signup">
-
-    <left>
-        <!-- Left side image -->
-        <StackPane alignment="CENTER_LEFT" prefHeight="600.0" prefWidth="486.0" BorderPane.alignment="CENTER">
-            <ImageView fitHeight="613.0" fitWidth="488.0" preserveRatio="true">
+<StackPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.auth.Signup">
+    <stylesheets>
+        <URL value="@../css_styles/signup.css" />
+    </stylesheets>
+    <children>
+        <!-- Background Image with Responsive Scaling -->
+        <ImageView fitHeight="800.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="false" style="-fx-opacity: 0.9;">
             <image>
-               <Image url="@../images/Login_Img.png" />
-            </image></ImageView>
-        </StackPane>
-    </left>
+                <Image url="@../images/Collage_Image.jpg" />
+            </image>
+        </ImageView>
 
-    <center>
-      <StackPane alignment="TOP_CENTER" BorderPane.alignment="CENTER">
-         <children>
-              <!-- Main content container -->
-              <VBox alignment="TOP_CENTER" maxWidth="600" prefWidth="300" spacing="20" style="-fx-background-color: white;">
-      
-                  <!-- Title -->
-                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="89.0" prefWidth="494.0" style="-fx-text-fill: #2d3091; -fx-font-size: 26; -fx-font-weight: bold;" text="New User Registration" />
-                     <!-- Form container -->
-                     <VBox alignment="CENTER_LEFT" prefHeight="491.0" prefWidth="512.0" spacing="5" style="-fx-padding: 0 50;">
-                  <VBox prefHeight="85.0" prefWidth="411.0">
-                     <children>
-               
-                                           <!-- Username field -->
-                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Username" />
-                               <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="314.0" spacing="10">
-                                   <TextField fx:id="txtUsername" promptText="Username" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
-                                   <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/user_icon.png" />
-                                 </image>
-                              </ImageView>
-                               </HBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="86.0" prefWidth="411.0">
-                     <children>
-   
-                                        <!-- Password field -->
-                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Password" />
-                               <HBox alignment="CENTER_LEFT" spacing="10">
-                                   <PasswordField fx:id="txtPassword" promptText="Password" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+        <!-- Background Overlay -->
+        <VBox styleClass="background-overlay" />
 
-                                   <TextField fx:id="txtVisiblePassword" promptText="Password" focusTraversable="false" visible="false" managed="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
-
-                                   <StackPane prefHeight="30" prefWidth="30" style="-fx-cursor: hand;">
-                                       <ImageView fx:id="showPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleShowPassword" preserveRatio="true">
+        <!-- Main Container -->
+        <VBox alignment="CENTER" spacing="0.0">
+            <children>
+                <!-- Header with Back Button -->
+                <HBox alignment="CENTER" spacing="15.0" style="-fx-padding: 25 30 10 30;">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleBackToLogin" spacing="8.0" styleClass="back-button">
+                            <children>
+                                <ImageView fx:id="backIcon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                       <Image url="@../images/eye_icon.png" />
+                                        <Image url="@../images/back_icon.png" />
                                     </image>
-                                 </ImageView>
-                                       <ImageView fx:id="hidePasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleHidePassword" preserveRatio="true" visible="false">
-                                    <image>
-                                       <Image url="@../images/invisible_icon.png" />
-                                    </image>
-                                 </ImageView>
-                                   </StackPane>
-                               </HBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="89.0" prefWidth="411.0">
-                     <children>
-               
-                                           <!-- Confirm Password field -->
-                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="Confirm password" />
-                               <HBox alignment="CENTER_LEFT" spacing="10">
-                                   <PasswordField fx:id="txtComPassword" promptText="Confirm Password" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+                                </ImageView>
+                                <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Back to Login" textFill="WHITE" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
 
-                                   <TextField fx:id="txtVisibleComPassword" promptText="Confirm Password" focusTraversable="false" visible="false" managed="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-background-color: transparent; -fx-border-width: 0 0 1 0; -fx-border-color: #999999;" />
+                <!-- Centered Signup Form -->
+                <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+                    <content>
+                        <VBox alignment="CENTER" style="-fx-alignment: center;" styleClass="form-wrapper">
+                            <children>
+                                <VBox alignment="CENTER" maxWidth="550.0" minWidth="450.0" styleClass="form-container">
+                                        <children>
+                                            <!-- Title -->
+                                            <Label styleClass="form-title" text="Student Registration">
+                                                <VBox.margin>
+                                                    <Insets bottom="25.0" />
+                                                </VBox.margin>
+                                            </Label>
 
-                                   <StackPane prefHeight="30" prefWidth="30" style="-fx-cursor: hand;">
-                                       <ImageView fx:id="showComPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleShowComPassword" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../images/eye_icon.png" />
-                                            </image>
-                                       </ImageView>
+                                            <!-- Form Fields Container -->
+                                            <VBox styleClass="form-section">
+                                                <children>
+                                                    <!-- Student ID Field -->
+                                                    <VBox>
+                                                        <children>
+                                                            <HBox spacing="5.0">
+                                                                <children>
+                                                                    <Label styleClass="field-label" text="Student ID" />
+                                                                    <Label styleClass="required-indicator" text="*" />
+                                                                </children>
+                                                            </HBox>
+                                                            <TextField fx:id="txtStudentId" promptText="Enter your student ID (numbers only)" styleClass="custom-text-field" />
+                                                            <Label fx:id="lblStudentIdError" styleClass="error-label" visible="false" />
+                                                        </children>
+                                                    </VBox>
 
-                                       <ImageView fx:id="hideComPasswordIcon" fitHeight="30" fitWidth="30" onMouseClicked="#handleHideComPassword" preserveRatio="true" visible="false">
-                                            <image>
-                                                <Image url="@../images/invisible_icon.png" />
-                                            </image>
-                                       </ImageView>
-                                   </StackPane>
-                               </HBox>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="83.0" prefWidth="411.0">
-                     <children>
-               
-                                           <!-- User type dropdown -->
-                               <Label style="-fx-text-fill: #999999; -fx-font-size: 18;" text="User type" />
-                               <HBox alignment="CENTER_LEFT" spacing="10">
-                                   <ComboBox fx:id="combUserType" focusTraversable="false" prefHeight="42.0" prefWidth="350.0" style="-fx-font-size: 18; -fx-text-fill: #5e5e5e; -fx-cursor: hand;">
+                                                    <!-- Name Fields Row -->
+                                                    <HBox spacing="10.0">
+                                                        <children>
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="First Name" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <TextField fx:id="txtFirstName" promptText="First name" styleClass="custom-text-field" />
+                                                                    <Label fx:id="lblFirstNameError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="Last Name" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <TextField fx:id="txtLastName" promptText="Last name" styleClass="custom-text-field" />
+                                                                    <Label fx:id="lblLastNameError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
+                                                        </children>
+                                                    </HBox>
 
-                                   </ComboBox>
-                                   <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/usertype_icon.png" />
-                                 </image>
-                              </ImageView>
-                               </HBox>
-                     </children>
-                  </VBox>
-         
-                                     <!-- Register button -->
-                         <Button fx:id="btnRegister" onAction="#handleRegister" focusTraversable="false" style="-fx-background-color: #00a650; -fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold; -fx-pref-height: 49; -fx-max-width: Infinity; -fx-pref-width: 100%; -fx-cursor: hand;" text="Sign up" />
-         
-                                     <!-- Back to login link -->
-                         <HBox alignment="CENTER" spacing="5">
-                             <ImageView fx:id="backIcon" fitHeight="20" fitWidth="20" onMouseClicked="#handleBackToLogin" preserveRatio="true" style="-fx-cursor: hand;">
-                           <image>
-                              <Image url="@../images/back_icon.png" />
-                           </image>
-                        </ImageView>
-                             <Label onMouseClicked="#handleBackToLogin" style="-fx-text-fill: #999999; -fx-font-size: 15; -fx-cursor: hand;" text="Back to sign in" />
-                         </HBox>
-                     </VBox>
-              </VBox>
+                                                    <HBox spacing="10.0">
+                                                        <children>
+                                                            <!-- Mobile Number -->
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="Mobile Number" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <TextField fx:id="txtMobileNumber" promptText="Enter 10-digit mobile number" styleClass="custom-text-field" />
+                                                                    <Label fx:id="lblMobileError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
 
-         </children>
-      </StackPane>
-    </center>
-</BorderPane>
+                                                            <!-- Email Address -->
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="Email Address" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <TextField fx:id="txtEmailId" promptText="Enter your email address" styleClass="custom-text-field" />
+                                                                    <Label fx:id="lblEmailError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
+                                                        </children>
+                                                    </HBox>
+
+
+                                                    <!-- Gender and Program Row -->
+                                                    <HBox spacing="15.0">
+                                                        <children>
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="Gender" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <ComboBox fx:id="combGender" maxWidth="1.7976931348623157E308" styleClass="custom-combo-box" />
+                                                                    <Label fx:id="lblGenderError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
+                                                            <VBox HBox.hgrow="ALWAYS">
+                                                                <children>
+                                                                    <HBox spacing="5.0">
+                                                                        <children>
+                                                                            <Label styleClass="field-label" text="Study Program" />
+                                                                            <Label styleClass="required-indicator" text="*" />
+                                                                        </children>
+                                                                    </HBox>
+                                                                    <ComboBox fx:id="combStudyProgram" maxWidth="1.7976931348623157E308" styleClass="custom-combo-box" />
+                                                                    <Label fx:id="lblProgramError" styleClass="error-label" visible="false" />
+                                                                </children>
+                                                            </VBox>
+                                                        </children>
+                                                    </HBox>
+
+                                                    <!-- Password Fields -->
+                                                    <VBox>
+                                                        <children>
+                                                            <HBox spacing="5.0">
+                                                                <children>
+                                                                    <Label styleClass="field-label" text="Password" />
+                                                                    <Label styleClass="required-indicator" text="*" />
+                                                                </children>
+                                                            </HBox>
+                                                            <StackPane>
+                                                                <children>
+                                                                    <PasswordField fx:id="txtPassword" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" />
+                                                                    <TextField fx:id="txtVisiblePassword" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" />
+                                                                    <HBox alignment="CENTER_RIGHT" StackPane.alignment="CENTER_RIGHT">
+                                                                        <children>
+                                                                            <ImageView fx:id="showPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleShowPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                                <image>
+                                                                                    <Image url="@../images/eye_icon.png" />
+                                                                                </image>
+                                                                                <HBox.margin>
+                                                                                    <Insets right="15.0" />
+                                                                                </HBox.margin>
+                                                                            </ImageView>
+                                                                            <ImageView fx:id="hidePasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleHidePassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                                <image>
+                                                                                    <Image url="@../images/invisible_icon.png" />
+                                                                                </image>
+                                                                                <HBox.margin>
+                                                                                    <Insets right="15.0" />
+                                                                                </HBox.margin>
+                                                                            </ImageView>
+                                                                        </children>
+                                                                    </HBox>
+                                                                </children>
+                                                            </StackPane>
+                                                            <Label fx:id="lblPasswordError" styleClass="error-label" visible="false" />
+                                                        </children>
+                                                    </VBox>
+
+                                                    <VBox>
+                                                        <children>
+                                                            <HBox>
+                                                                <children>
+                                                                    <Label styleClass="field-label" text="Confirm Password" />
+                                                                    <Label styleClass="required-indicator" text="*" />
+                                                                </children>
+                                                            </HBox>
+                                                            <StackPane>
+                                                                <children>
+                                                                    <PasswordField fx:id="txtComPassword" promptText="Confirm your password" styleClass="custom-text-field" />
+                                                                    <TextField fx:id="txtVisibleComPassword" promptText="Confirm your password" styleClass="custom-text-field" />
+                                                                    <HBox alignment="CENTER_RIGHT" StackPane.alignment="CENTER_RIGHT">
+                                                                        <children>
+                                                                            <ImageView fx:id="showComPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleShowComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                                <image>
+                                                                                    <Image url="@../images/eye_icon.png" />
+                                                                                </image>
+                                                                                <HBox.margin>
+                                                                                    <Insets right="15.0" />
+                                                                                </HBox.margin>
+                                                                            </ImageView>
+                                                                            <ImageView fx:id="hideComPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleHideComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                                <image>
+                                                                                    <Image url="@../images/invisible_icon.png" />
+                                                                                </image>
+                                                                                <HBox.margin>
+                                                                                    <Insets right="15.0" />
+                                                                                </HBox.margin>
+                                                                            </ImageView>
+                                                                        </children>
+                                                                    </HBox>
+                                                                </children>
+                                                            </StackPane>
+                                                            <Label fx:id="lblComPasswordError" styleClass="error-label" visible="false" />
+                                                        </children>
+                                                    </VBox>
+                                                    <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                                        <children>
+
+                                                            <!-- Register Button -->
+                                                            <Button fx:id="btnRegister" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleRegister" prefHeight="31.0" prefWidth="499.0" styleClass="register-button" stylesheets="@../css_styles/signup.css" text="Create Account" />
+                                                        </children>
+                                                    </VBox>
+
+                                                    <!-- Back to Login Link -->
+                                                    <HBox alignment="CENTER">
+                                                        <children>
+                                                            <Label style="-fx-font-size: 13px; -fx-text-fill: #000000;" text="Already have an account?" wrapText="true" />
+                                                            <Hyperlink fx:id="linkBackToLogin" onAction="#handleBackToLogin" style="-fx-font-size: 13px;" styleClass="login-link" text="Login here" />
+                                                        </children>
+                                                        <VBox.margin>
+                                                            <Insets top="2.0" />
+                                                        </VBox.margin>
+                                                    </HBox>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                        <VBox.margin>
+                                            <Insets bottom="30.0" left="30.0" right="30.0" top="0.0" />
+                                        </VBox.margin>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

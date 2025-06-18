@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hms.views.users.admin.Requests"
+      spacing="10"
+      style="-fx-font-family: 'Segoe UI'; -fx-background-color: #F9F9F9;">
+
+    <!-- padding -->
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- ────────── Search bar ────────── -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Search:" style="-fx-font-size: 14;"/>
+        <TextField fx:id="txt_search" promptText="Student ID or Status"
+                   HBox.hgrow="ALWAYS"
+                   onKeyReleased="#onSearchKeyReleased"/>
+
+        <Button fx:id="btnReset" text="Reset"
+                onAction="#onResetClicked"
+                style="-fx-background-radius: 5; -fx-background-color: #D0D0D0; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <!-- ────────── Requests table ────────── -->
+    <TableView fx:id="tbl_requests" VBox.vgrow="ALWAYS">
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+        <columns>
+            <TableColumn fx:id="colRequestId"    text="Request ID"/>
+            <TableColumn fx:id="colStudentId"    text="Student ID"/>
+            <TableColumn fx:id="colHostelId"     text="Hostel ID"/>
+            <TableColumn fx:id="colRoomType"     text="Room Type"/>
+            <TableColumn fx:id="colFacilityPref" text="Facilities"/>
+            <TableColumn fx:id="colReqDate"      text="Date"/>
+            <TableColumn fx:id="colStatus"       text="Status"/>
+            <TableColumn fx:id="colRemarks"      text="Remarks"/>
+        </columns>
+    </TableView>
+
+    <!-- ────────── Remarks + action buttons ────────── -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Remarks:" style="-fx-font-size: 14;"/>
+        <TextArea fx:id="txt_remarks" promptText="Optional remark"
+                  prefRowCount="2" HBox.hgrow="ALWAYS"/>
+
+        <VBox spacing="8" alignment="CENTER">
+            <Button fx:id="btnApprove" text="Approve" onAction="#onApproveClicked"
+                    style="-fx-background-color: #00A650; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+            <Button fx:id="btnReject"  text="Reject"  onAction="#onRejectClicked"
+                    style="-fx-background-color: #EC1D25; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+        </VBox>
+    </HBox>
+
+</VBox>

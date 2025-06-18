@@ -131,23 +131,27 @@ public class InnerDashboard implements Initializable {
 
     public void totalStaff() {
         try {
-            pst = conn.prepareStatement("SELECT COUNT(*) AS StaffCount FROM user WHERE User_type = 'Staff'");
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
+            // staff table holds every staff login, no User_type column needed
+            String sql = "SELECT COUNT(*) AS StaffCount FROM staff";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
                 int count = rs.getInt("StaffCount");
-                txtstaff.setText(String.valueOf(count));
+                txtstaff.setText(String.valueOf(count));   // update label
             }
         } catch (SQLException ex) {
             showAlert("Database Error", "Error fetching total staff: " + ex.getMessage());
         } finally {
             try {
-                if (rs != null) rs.close();
+                if (rs  != null) rs.close();
                 if (pst != null) pst.close();
             } catch (SQLException ex) {
                 showAlert("Database Error", "Error closing resources: " + ex.getMessage());
             }
         }
     }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

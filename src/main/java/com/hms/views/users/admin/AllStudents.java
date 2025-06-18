@@ -102,7 +102,8 @@ public class AllStudents implements Initializable {
     private void updateTable() {
         studentList.clear();
         try {
-            String sql = "SELECT * FROM student";
+            String sql = "SELECT CONCAT(first_name, ' ', last_name) AS name, address, gender, guardian, student_id, " +
+                         "study_year, nic, contact_no, email, emg_contact, programme, room_no FROM student";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
@@ -135,6 +136,7 @@ public class AllStudents implements Initializable {
             }
         }
     }
+
 
     private void searchStudent(String studentId) {
         studentList.clear();

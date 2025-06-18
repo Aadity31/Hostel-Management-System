@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -211,6 +212,23 @@ public class Dashboard extends Application implements Initializable {
             e.printStackTrace();
         }
     }
+    
+    @FXML
+    private void handleRequestsClick() {
+        String fxml = "/com/hms/fxml/admin/requests.fxml";
+        URL url = getClass().getResource(fxml);
+        if (url == null) {
+            System.err.println("❌  Cannot find " + fxml);
+            return;                       // nothing to load
+        }
+        try {
+            Parent view = FXMLLoader.load(url);
+            contentArea.getChildren().setAll(view);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
     @FXML
     private void handleLogoutAction() {

@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,186 +25,181 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Login screen controller.
+ * Each user‑type (Admin / Staff / Student) is authenticated
+ * against its own table:  admin, staff, student.
+ * Those tables contain only two columns: username VARCHAR, password VARCHAR.
+ */
 public class Login implements Initializable {
 
-    @FXML private TextField txtUsername;
-    @FXML private PasswordField txtPassword;
-    @FXML private TextField txtVisiblePassword;
+    /* ───────── UI ───────── */
+    @FXML private TextField        txtUsername;
+    @FXML private PasswordField    txtPassword;          // hidden input
+    @FXML private TextField        txtVisiblePassword;   // visible when eye‑open
     @FXML private ComboBox<String> combUserType;
-    @FXML private Button btnLogin;
-    @FXML private Label signUpLabel;
-    @FXML private ImageView showPasswordIcon;
-    @FXML private ImageView hidePasswordIcon;
+    @FXML private Button           btnLogin;
+    @FXML private Label            signUpLabel;
+    @FXML private ImageView        showPasswordIcon;
+    @FXML private ImageView        hidePasswordIcon;
 
+    /* ───────── DB ───────── */
     private Connection conn;
-    private PreparedStatement pst;
-    private ResultSet rs;
 
-
+    /* ───────── INITIALISE ───────── */
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Set ComboBox items
-        ObservableList<String> userTypes = FXCollections.observableArrayList("Select", "Admin", "Staff", "Student");
-        combUserType.setItems(userTypes);
-        combUserType.setValue("Select");  // set default selected value
-        // Initialize DB connection
+
+        combUserType.setItems(
+                FXCollections.observableArrayList("Select", "Admin", "Staff", "Student"));
+        combUserType.setValue("Select");
+
         conn = DB.connect();
 
-        // Set up password toggle visibility
-        hidePasswordIcon.setVisible(false);
+        hidePasswordIcon.setVisible(false);          // start with hidden “eye”
+
+        // keep visible + hidden password fields in sync
+        txtVisiblePassword.textProperty()
+                          .bindBidirectional(txtPassword.textProperty());
     }
 
-
+    /* ───────── LOGIN ───────── */
     @FXML
     private void handleLogin() {
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText();     // same text as visible field
         String userType = combUserType.getValue();
 
-        if (username.isEmpty() || password.isEmpty() || userType == null || userType.equals("Select")) {
-            showAlert(Alert.AlertType.ERROR, "Error", "One or more required fields are empty");
+        if (username.isEmpty() || password.isEmpty() || "Select".equals(userType)) {
+            showAlert(Alert.AlertType.ERROR, "Error",
+                      "Username, password or user‑type is empty.");
             return;
         }
 
-        String sql = "SELECT User_id, Username, Password, User_type FROM user WHERE (BINARY Username = ? AND BINARY Password = ? AND User_type = ?)";
+        // pick the credential table
+        String table = switch (userType) {
+            case "Admin"   -> "admin";
+            case "Staff"   -> "staff";
+            case "Student" -> "student";
+            default        -> null;
+        };
+        if (table == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Invalid user type."); return;
+        }
 
-        try {
-            pst = conn.prepareStatement(sql);
+        String sql = "SELECT username FROM " + table +
+                     " WHERE BINARY username=? AND BINARY password=?";
+
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+
             pst.setString(1, username);
             pst.setString(2, password);
-            pst.setString(3, userType);
 
-            rs = pst.executeQuery();
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {                      // ✅ credentials valid
+                    Emp.UserId   = 0;                // no numeric id in this schema
+                    Emp.UserName = username;
 
-            int count = 0;
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                String un = rs.getString(2);
-                Emp.UserId = id;
-                Emp.UserName = un;
-                count++;
+                    logLogin(username);
+                    openDashboard(userType);
+                    ((Stage) btnLogin.getScene().getWindow()).close();
+                } else {
+                    showAlert(Alert.AlertType.ERROR,
+                              "Login Failed", "Username or password incorrect.");
+                }
             }
 
-            if (count == 1) {
-                // Log successful login
-                logLogin(Emp.UserId);
-
-                // Open appropriate dashboard
-                openDashboard(userType);
-
-                // Close login window
-                ((Stage) btnLogin.getScene().getWindow()).close();
-            } else if (count > 1) {
-                showAlert(Alert.AlertType.WARNING, "Warning", "Duplicate Username or Password - Access denied");
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Username, Password or Usertype is not correct");
-            }
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        } catch (SQLException ex) {
+            showAlert(Alert.AlertType.ERROR,
+                      "Database Error", ex.getMessage());
         }
     }
 
-    private void logLogin(int userId) throws SQLException {
-        Date currentDate = GregorianCalendar.getInstance().getTime();
-        DateFormat df = DateFormat.getDateInstance();
-        String dateString = df.format(currentDate);
+    /* ───────── LOG ACTIVITY ───────── */
+    private void logLogin(String userName) {
 
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String timeString = sdf.format(d);
+        Date now = new Date();
+        String date = DateFormat.getDateInstance().format(now);
+        String time = new SimpleDateFormat("HH:mm:ss").format(now);
 
-        String reg = "INSERT INTO logs (User_id, Date, Status) VALUES (?, ?, ?)";
-        pst = conn.prepareStatement(reg);
-        pst.setInt(1, userId);
-        pst.setString(2, timeString + " / " + dateString);
-        pst.setString(3, "Logged in");
-        pst.execute();
+        String sql = "INSERT INTO logs (User_name, Date, Status) VALUES (?, ?, ?)";
+
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, userName);
+            p.setString(2, time + " / " + date);
+            p.setString(3, "Logged in");
+            p.execute();
+        } catch (SQLException ex) {
+            showAlert(Alert.AlertType.ERROR, "Logging Error", ex.getMessage());
+        }
     }
 
+    /* ───────── OPEN DASHBOARD ───────── */
     private void openDashboard(String userType) {
         try {
             String fxmlPath = switch (userType) {
-                case "Admin" -> "/com/hms/fxml/admin/dashboard.fxml";
-                case "Staff" -> "/com/hms/fxml/staff/dashboard.fxml";
+                case "Admin"   -> "/com/hms/fxml/admin/dashboard.fxml";
+                case "Staff"   -> "/com/hms/fxml/staff/dashboard.fxml";
                 case "Student" -> "/com/hms/fxml/student/dashboard.fxml";
-                default -> "";
+                default        -> "";
             };
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getResource(fxmlPath)));
 
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(fxmlPath)));
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle(userType + " Dashboard");
-            stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/hms/images/HMS.png"))));
+
+            InputStream icon = getClass().getResourceAsStream("/com/hms/images/HMS.png");
+            if (icon != null) stage.getIcons().add(new Image(icon));
+
             stage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /* ───────── SIGN‑UP / LINK EFFECTS ───────── */
     @FXML
     private void handleSignUp() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/hms/fxml/signup.fxml")));
+            Parent root = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getResource(
+                            "/com/hms/fxml/signup.fxml")));
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Sign Up");
 
-            InputStream iconStream = getClass().getResourceAsStream("/com/hms/images/HMS.png");
-            if (iconStream != null) {
-                stage.getIcons().add(new Image(iconStream));
-            } else {
-                System.err.println("⚠️ HMS.png icon not found at /com/hms/images/HMS.png");
-            }
+            InputStream icon = getClass().getResourceAsStream("/com/hms/images/HMS.png");
+            if (icon != null) stage.getIcons().add(new Image(icon));
 
             stage.show();
-
-            // Close login window
             ((Stage) signUpLabel.getScene().getWindow()).close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    @FXML private void handleSignUpHover() { signUpLabel.setStyle("-fx-text-fill:#00e870;"); }
+    @FXML private void handleSignUpExit () { signUpLabel.setStyle("-fx-text-fill:#00a650;"); }
 
-
-    @FXML
-    private void handleSignUpHover() {
-        signUpLabel.setStyle("-fx-text-fill: #00e870;");
-    }
-
-    @FXML
-    private void handleSignUpExit() {
-        signUpLabel.setStyle("-fx-text-fill: #00a650;");
-    }
-
+    /* ───────── PASSWORD EYE ICON ───────── */
     @FXML
     private void handleShowPassword() {
-        txtVisiblePassword.setText(txtPassword.getText());
         txtPassword.setVisible(false);
         txtPassword.setManaged(false);
 
         txtVisiblePassword.setVisible(true);
         txtVisiblePassword.setManaged(true);
 
-        txtVisiblePassword.setFocusTraversable(false); // 🔐 Prevent focus
-        txtVisiblePassword.getParent().requestFocus();  // 🔐 Transfer focus
-
         showPasswordIcon.setVisible(false);
-        showPasswordIcon.setManaged(false);
-
         hidePasswordIcon.setVisible(true);
-        hidePasswordIcon.setManaged(true);
     }
-
     @FXML
     private void handleHidePassword() {
-        txtPassword.setText(txtVisiblePassword.getText());
         txtVisiblePassword.setVisible(false);
         txtVisiblePassword.setManaged(false);
 
@@ -211,17 +207,15 @@ public class Login implements Initializable {
         txtPassword.setManaged(true);
 
         hidePasswordIcon.setVisible(false);
-        hidePasswordIcon.setManaged(false);
-
         showPasswordIcon.setVisible(true);
-        showPasswordIcon.setManaged(true);
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /* ───────── ALERT UTIL ───────── */
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

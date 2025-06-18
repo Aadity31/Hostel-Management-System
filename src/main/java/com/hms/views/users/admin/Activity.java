@@ -29,26 +29,13 @@ import javafx.util.Duration;
 
 public class Activity implements Initializable {
 
-    @FXML
-    private TextField txt_search;
-
-    @FXML
-    private Button btnreset;
-
-    @FXML
-    private TableView<LogEntry> tbl_3;
-
-    @FXML
-    private TableColumn<LogEntry, String> colLogsId;
-
-    @FXML
-    private TableColumn<LogEntry, String> colUserId;
-
-    @FXML
-    private TableColumn<LogEntry, String> colDate;
-
-    @FXML
-    private TableColumn<LogEntry, String> colStatus;
+    @FXML private TextField txt_search;
+    @FXML private Button btnreset;
+    @FXML private TableView<LogEntry> tbl_3;
+    @FXML private TableColumn<LogEntry, String> colLogsId;
+    @FXML private TableColumn<LogEntry, String> colUserId;
+    @FXML private TableColumn<LogEntry, String> colDate;
+    @FXML private TableColumn<LogEntry, String> colStatus;
 
     private Connection conn = null;
     private ResultSet rs = null;
@@ -58,19 +45,12 @@ public class Activity implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Initialize database connection
         conn = DB.connect();
-
-        // Setup table columns
         setupTableColumns();
-
-        // Initialize UI components
         currentDate();
         startClock();
         updateTable();
-
-        // Enable table sorting
-        tbl_3.setSortPolicy(null);
+        // tbl_3.setSortPolicy(null); // enable default sorting
     }
 
     private void setupTableColumns() {
@@ -78,7 +58,6 @@ public class Activity implements Initializable {
         colUserId.setCellValueFactory(cellData -> cellData.getValue().userIdProperty());
         colDate.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
         colStatus.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
-
         tbl_3.setItems(logsList);
     }
 
@@ -91,17 +70,15 @@ public class Activity implements Initializable {
     public void currentDate() {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy");
-        // Note: Original code didn't use this date anywhere
+        // Optional: use the date string if needed
     }
 
     public void startClock() {
-        timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e -> {
-                    Date d = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
-                    // Note: Original code didn't display time anywhere
-                })
-        );
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            Date d = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
+            // Optional: use the time string if needed
+        }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -113,71 +90,73 @@ public class Activity implements Initializable {
     }
 
     private void updateTable() {
+        logsList.clear();
         try {
             String sql = "SELECT * FROM logs";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
-            logsList.clear();
             while (rs.next()) {
+                String logsId = rs.getString("logs_id");
+                String userId = rs.getString("User_id");
+                String date = rs.getString("date");
+                String status = rs.getString("status");
+
                 LogEntry entry = new LogEntry(
-                        rs.getString("logs_id") != null ? rs.getString("logs_id") : "",
-                        rs.getString("User_id") != null ? rs.getString("User_id") : "",
-                        rs.getString("date") != null ? rs.getString("date") : "",
-                        rs.getString("status") != null ? rs.getString("status") : ""
+                        logsId != null ? logsId : "",
+                        userId != null ? userId : "",
+                        date != null ? date : "",
+                        status != null ? status : ""
                 );
                 logsList.add(entry);
             }
 
         } catch (SQLException e) {
             showAlert("Database Error", "Error fetching logs data: " + e.getMessage());
-            e.printStackTrace();
         } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                showAlert("Database Error", "Error closing resources: " + e.getMessage());
-            }
+            closeResources();
         }
     }
 
     @FXML
     private void onSearchKeyReleased(KeyEvent event) {
         String searchText = txt_search.getText().trim();
-
         if (searchText.isEmpty()) {
             updateTable();
             return;
         }
 
+        if (!searchText.matches("\\d+")) {
+            showAlert("Input Error", "Please enter a valid numeric User ID");
+            return;
+        }
+
+        logsList.clear();
         try {
-            String sql = "SELECT * FROM logs WHERE User_id = ?";
+            String sql = "SELECT * FROM logs WHERE CAST(User_id AS TEXT) LIKE ?";
             pst = conn.prepareStatement(sql);
-            pst.setString(1, searchText);
+            pst.setString(1, "%" + searchText + "%");
             rs = pst.executeQuery();
 
-            logsList.clear();
             while (rs.next()) {
+                String logsId = rs.getString("logs_id");
+                String userId = rs.getString("User_id");
+                String date = rs.getString("date");
+                String status = rs.getString("status");
+
                 LogEntry entry = new LogEntry(
-                        rs.getString("logs_id") != null ? rs.getString("logs_id") : "",
-                        rs.getString("User_id") != null ? rs.getString("User_id") : "",
-                        rs.getString("date") != null ? rs.getString("date") : "",
-                        rs.getString("status") != null ? rs.getString("status") : ""
+                        logsId != null ? logsId : "",
+                        userId != null ? userId : "",
+                        date != null ? date : "",
+                        status != null ? status : ""
                 );
                 logsList.add(entry);
             }
 
         } catch (SQLException e) {
             showAlert("Database Error", "Error searching logs: " + e.getMessage());
-            e.printStackTrace();
         } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                showAlert("Database Error", "Error closing resources: " + e.getMessage());
-            }
+            closeResources();
         }
     }
 
@@ -195,12 +174,19 @@ public class Activity implements Initializable {
         alert.showAndWait();
     }
 
-    // Method to refresh table data
+    private void closeResources() {
+        try {
+            if (rs != null) rs.close();
+            if (pst != null) pst.close();
+        } catch (SQLException e) {
+            showAlert("Database Error", "Error closing resources: " + e.getMessage());
+        }
+    }
+
     public void refreshData() {
         updateTable();
     }
 
-    // Cleanup method to be called when closing the activity view
     public void cleanup() {
         stopClock();
         try {
@@ -212,7 +198,6 @@ public class Activity implements Initializable {
         }
     }
 
-    // Inner class to represent a log entry
     public static class LogEntry {
         private final SimpleStringProperty logsId;
         private final SimpleStringProperty userId;

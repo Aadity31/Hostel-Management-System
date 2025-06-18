@@ -34,6 +34,25 @@ CREATE TABLE admin (
   User_type VARCHAR(20) NOT NULL
 );
 
+CREATE TABLE staff (
+  Staff_id INT PRIMARY KEY AUTO_INCREMENT,
+  First_name VARCHAR(50) NOT NULL,
+  Last_name VARCHAR(50) NOT NULL,
+  Email VARCHAR(100) NOT NULL UNIQUE,
+  Mobile_number VARCHAR(15) NOT NULL UNIQUE,
+  Gender VARCHAR(10),
+  Department VARCHAR(100),
+  Designation VARCHAR(100),
+  Username VARCHAR(50) NOT NULL UNIQUE,
+  Password VARCHAR(100) NOT NULL
+);
+
+INSERT INTO staff
+(First_name, Last_name, Email, Mobile_number, Gender, Department, Designation, Username, Password)
+VALUES
+('Ravi', 'Kumar', 'ravi.kumar@example.com', '9876543210', 'Male', 'Maintenance', 'Warden', 'ravi', 'ravi123'),
+('Anjali', 'Sharma', 'anjali.sharma@example.com', '9876512345', 'Female', 'Accounts', 'Accountant', 'anjali', 'anjali123');
+
 -- Sample admin data
 INSERT INTO admin (User_id, Username, Password, User_type) VALUES
 (1, 'Admin', 'admin@123', 'Admin'),
@@ -124,9 +143,19 @@ CREATE TABLE logs (
   FOREIGN KEY (User_id) REFERENCES admin(User_id)
 );
 
+CREATE TABLE IF NOT EXISTS logs (
+    logs_id INT AUTO_INCREMENT PRIMARY KEY,
+    User_id INT NOT NULL,
+    Date VARCHAR(100) NOT NULL,
+    Status VARCHAR(255) NOT NULL
+);
+
+
 -- -------------------------------
 -- Indexes and Constraints (Expanded)
 -- -------------------------------
+ALTER TABLE staff ADD COLUMN User_type VARCHAR(50) NOT NULL DEFAULT 'Staff';
+ALTER TABLE logs ADD Username VARCHAR(50);
 ALTER TABLE fees ADD KEY `INDEX` (Student_id);
 ALTER TABLE logs ADD KEY `INDEX` (User_id);
 ALTER TABLE student ADD KEY `INDEX` (Room_no);

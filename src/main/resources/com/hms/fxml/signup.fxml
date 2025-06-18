@@ -33,22 +33,6 @@
         <!-- Main Container -->
         <VBox alignment="CENTER" spacing="0.0">
             <children>
-                <!-- Header with Back Button -->
-                <HBox alignment="CENTER" spacing="15.0" style="-fx-padding: 25 30 10 30;">
-                    <children>
-                        <HBox alignment="CENTER_LEFT" onMouseClicked="#handleBackToLogin" spacing="8.0" styleClass="back-button">
-                            <children>
-                                <ImageView fx:id="backIcon" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../images/back_icon.png" />
-                                    </image>
-                                </ImageView>
-                                <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Back to Login" textFill="WHITE" />
-                            </children>
-                        </HBox>
-                    </children>
-                </HBox>
-
                 <!-- Centered Signup Form -->
                 <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
                     <content>
@@ -182,35 +166,32 @@
                                                                     <Label styleClass="required-indicator" text="*" />
                                                                 </children>
                                                             </HBox>
-                                                            <StackPane>
-                                                                <children>
-                                                                    <PasswordField fx:id="txtPassword" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" />
-                                                                    <TextField fx:id="txtVisiblePassword" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" />
-                                                                    <HBox alignment="CENTER_RIGHT" StackPane.alignment="CENTER_RIGHT">
-                                                                        <children>
-                                                                            <ImageView fx:id="showPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleShowPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
-                                                                                <image>
-                                                                                    <Image url="@../images/eye_icon.png" />
-                                                                                </image>
-                                                                                <HBox.margin>
-                                                                                    <Insets right="15.0" />
-                                                                                </HBox.margin>
-                                                                            </ImageView>
-                                                                            <ImageView fx:id="hidePasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleHidePassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
-                                                                                <image>
-                                                                                    <Image url="@../images/invisible_icon.png" />
-                                                                                </image>
-                                                                                <HBox.margin>
-                                                                                    <Insets right="15.0" />
-                                                                                </HBox.margin>
-                                                                            </ImageView>
-                                                                        </children>
-                                                                    </HBox>
-                                                                </children>
-                                                            </StackPane>
+
+                                                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                                                <StackPane>
+                                                                    <children>
+                                                                        <PasswordField fx:id="txtPassword" prefWidth="542.0" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" />
+                                                                        <TextField fx:id="txtVisiblePassword" managed="false" prefWidth="542.0" promptText="Enter password (minimum 6 characters)" styleClass="custom-text-field" visible="false" />
+                                                                    </children>
+                                                                </StackPane>
+
+                                                                <ImageView fx:id="showPasswordIcon" fitHeight="24.0" fitWidth="24.0" onMouseClicked="#handleShowPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                    <image>
+                                                                        <Image url="@../images/eye_icon.png" />
+                                                                    </image>
+                                                                </ImageView>
+
+                                                                <ImageView fx:id="hidePasswordIcon" fitHeight="24.0" fitWidth="24.0" managed="false" onMouseClicked="#handleHidePassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon" visible="false">
+                                                                    <image>
+                                                                        <Image url="@../images/invisible_icon.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </HBox>
+
                                                             <Label fx:id="lblPasswordError" styleClass="error-label" visible="false" />
                                                         </children>
                                                     </VBox>
+
 
                                                     <VBox>
                                                         <children>
@@ -220,35 +201,32 @@
                                                                     <Label styleClass="required-indicator" text="*" />
                                                                 </children>
                                                             </HBox>
-                                                            <StackPane>
-                                                                <children>
-                                                                    <PasswordField fx:id="txtComPassword" promptText="Confirm your password" styleClass="custom-text-field" />
-                                                                    <TextField fx:id="txtVisibleComPassword" promptText="Confirm your password" styleClass="custom-text-field" />
-                                                                    <HBox alignment="CENTER_RIGHT" StackPane.alignment="CENTER_RIGHT">
-                                                                        <children>
-                                                                            <ImageView fx:id="showComPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleShowComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
-                                                                                <image>
-                                                                                    <Image url="@../images/eye_icon.png" />
-                                                                                </image>
-                                                                                <HBox.margin>
-                                                                                    <Insets right="15.0" />
-                                                                                </HBox.margin>
-                                                                            </ImageView>
-                                                                            <ImageView fx:id="hideComPasswordIcon" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#handleHideComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
-                                                                                <image>
-                                                                                    <Image url="@../images/invisible_icon.png" />
-                                                                                </image>
-                                                                                <HBox.margin>
-                                                                                    <Insets right="15.0" />
-                                                                                </HBox.margin>
-                                                                            </ImageView>
-                                                                        </children>
-                                                                    </HBox>
-                                                                </children>
-                                                            </StackPane>
+
+                                                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                                                <StackPane>
+                                                                    <children>
+                                                                        <PasswordField fx:id="txtComPassword" prefWidth="482.0" promptText="Confirm your password" styleClass="custom-text-field" />
+                                                                        <TextField fx:id="txtVisibleComPassword" prefWidth="482.0" managed="false" promptText="Confirm your password" styleClass="custom-text-field" visible="false" />
+                                                                    </children>
+                                                                </StackPane>
+
+                                                                <ImageView fx:id="showComPasswordIcon" fitHeight="24.0" fitWidth="24.0" onMouseClicked="#handleShowComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon">
+                                                                    <image>
+                                                                        <Image url="@../images/eye_icon.png" />
+                                                                    </image>
+                                                                </ImageView>
+
+                                                                <ImageView fx:id="hideComPasswordIcon" fitHeight="24.0" fitWidth="24.0" managed="false" onMouseClicked="#handleHideComPassword" pickOnBounds="true" preserveRatio="true" styleClass="password-icon" visible="false">
+                                                                    <image>
+                                                                        <Image url="@../images/invisible_icon.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </HBox>
+
                                                             <Label fx:id="lblComPasswordError" styleClass="error-label" visible="false" />
                                                         </children>
                                                     </VBox>
+
                                                     <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
                                                         <children>
 

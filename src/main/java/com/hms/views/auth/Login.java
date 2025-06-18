@@ -189,17 +189,26 @@ public class Login implements Initializable {
     /* ───────── PASSWORD EYE ICON ───────── */
     @FXML
     private void handleShowPassword() {
+        txtVisiblePassword.setText(txtPassword.getText());
         txtPassword.setVisible(false);
         txtPassword.setManaged(false);
 
         txtVisiblePassword.setVisible(true);
         txtVisiblePassword.setManaged(true);
 
+        txtVisiblePassword.setFocusTraversable(false); // 🔐 Prevent focus
+        txtVisiblePassword.getParent().requestFocus();  // 🔐 Transfer focus
+
         showPasswordIcon.setVisible(false);
+        showPasswordIcon.setManaged(false);
+
         hidePasswordIcon.setVisible(true);
+        hidePasswordIcon.setManaged(true);
     }
+
     @FXML
     private void handleHidePassword() {
+        txtPassword.setText(txtVisiblePassword.getText());
         txtVisiblePassword.setVisible(false);
         txtVisiblePassword.setManaged(false);
 
@@ -207,7 +216,10 @@ public class Login implements Initializable {
         txtPassword.setManaged(true);
 
         hidePasswordIcon.setVisible(false);
+        hidePasswordIcon.setManaged(false);
+
         showPasswordIcon.setVisible(true);
+        showPasswordIcon.setManaged(true);
     }
 
     /* ───────── ALERT UTIL ───────── */

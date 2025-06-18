@@ -348,17 +348,19 @@ public class Dashboard extends Application implements Initializable {
     private void logUserActivity(String activity) {
         try {
             if (conn != null) {
+                // Get current datetime in correct format for MySQL
                 LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss / yyyy-MM-dd");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String timestamp = now.format(formatter);
 
-                // Assuming you have a user ID available
-                int userId = getUserId(); // You need to implement this method
+                // Get user ID (you need to define getUserId() properly)
+                int userId = getUserId();
 
-                String query = "INSERT INTO logs (User_id, Date, Status) VALUES (?, ?, ?)";
+                // Prepare SQL query
+                String query = "INSERT INTO logs (User_id, Login_Date, Status) VALUES (?, ?, ?)";
                 pst = conn.prepareStatement(query);
                 pst.setInt(1, userId);
-                pst.setString(2, timestamp);
+                pst.setString(2, timestamp);  // Format matches DATETIME column
                 pst.setString(3, activity);
                 pst.execute();
             }

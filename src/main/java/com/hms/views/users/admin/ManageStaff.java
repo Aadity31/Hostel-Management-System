@@ -78,13 +78,13 @@ public class ManageStaff implements Initializable {
     private void updateTable() {
         staffData.clear();
         try {
-            String sql = "SELECT * FROM user WHERE User_type = 'Staff'";
+            String sql = "SELECT * FROM staff WHERE User_type = 'Staff'";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
 
             while (rs.next()) {
                 StaffRecord record = new StaffRecord(
-                        rs.getInt("User_id"),
+                        rs.getInt("Staff_id"),
                         rs.getString("Username"),
                         rs.getString("Password"),
                         rs.getString("User_type")
@@ -102,7 +102,7 @@ public class ManageStaff implements Initializable {
     private void addStaff() {
         if (validateFields()) {
             try {
-                String sql = "INSERT INTO user (Username, Password, User_type) VALUES (?, ?, ?)";
+                String sql = "INSERT INTO logs (Staff_id, Login_Date, Status) VALUES (?, ?, ?)";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, txtusername.getText());
                 pst.setString(2, txtpassword.getText());
@@ -135,7 +135,7 @@ public class ManageStaff implements Initializable {
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 try {
-                    String sql = "UPDATE user SET Username=?, Password=?, User_type=? WHERE User_id=?";
+                    String sql = "UPDATE user SET Username=?, Password=?, User_type=? WHERE Staff_id=?";
                     pst = conn.prepareStatement(sql);
                     pst.setString(1, txtusername.getText());
                     pst.setString(2, txtpassword.getText());
@@ -172,7 +172,7 @@ public class ManageStaff implements Initializable {
                     // Log the action first
                     logAction("Staff Account Removed");
 
-                    String sql = "DELETE FROM user WHERE User_id=?";
+                    String sql = "DELETE FROM user WHERE Staff_id=?";
                     pst = conn.prepareStatement(sql);
                     pst.setString(1, txtuserid.getText());
                     pst.execute();
@@ -235,7 +235,7 @@ public class ManageStaff implements Initializable {
             String timestamp = timeString + " / " + dateString;
             int userId = Emp.UserId;
 
-            String sql = "INSERT INTO logs (User_id, Date, Status) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO logs (Staff_id, Date, Status) VALUES (?, ?, ?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, userId);
             pst.setString(2, timestamp);

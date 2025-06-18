@@ -97,10 +97,10 @@ public class Activity implements Initializable {
             rs = pst.executeQuery();
 
             while (rs.next()) {
-                String logsId = rs.getString("logs_id");
+                String logsId = rs.getString("Logs_id");
                 String userId = rs.getString("User_id");
-                String date = rs.getString("date");
-                String status = rs.getString("status");
+                String date   = rs.getString("Login_Date");
+                String status = rs.getString("Status");
 
                 LogEntry entry = new LogEntry(
                         logsId != null ? logsId : "",
@@ -133,16 +133,16 @@ public class Activity implements Initializable {
 
         logsList.clear();
         try {
-            String sql = "SELECT * FROM logs WHERE CAST(User_id AS TEXT) LIKE ?";
+            String sql = "SELECT * FROM logs WHERE User_id LIKE ?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, "%" + searchText + "%");
             rs = pst.executeQuery();
 
             while (rs.next()) {
-                String logsId = rs.getString("logs_id");
+                String logsId = rs.getString("Logs_id");
                 String userId = rs.getString("User_id");
-                String date = rs.getString("date");
-                String status = rs.getString("status");
+                String date   = rs.getString("Login_Date");
+                String status = rs.getString("Status");
 
                 LogEntry entry = new LogEntry(
                         logsId != null ? logsId : "",

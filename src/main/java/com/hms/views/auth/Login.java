@@ -88,13 +88,14 @@ public class Login implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", "Invalid user type."); return;
         }
 
-        String sql = "SELECT username FROM " + table +
-                     " WHERE BINARY username=? AND BINARY password=?";
+        String sql = "SELECT Username FROM admin " +
+                "WHERE BINARY Username=? AND BINARY Password=? AND User_type=?";
 
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, username);
             pst.setString(2, password);
+            pst.setString(3, userType);
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {                      // ✅ credentials valid
@@ -117,19 +118,26 @@ public class Login implements Initializable {
     }
 
     /* ───────── LOG ACTIVITY ───────── */
+
     private void logLogin(String userName) {
+        try {
+            // Get User_id from admin table
+            String getIdSql = "SELECT User_id FROM admin WHERE Username=?";
+            try (PreparedStatement ps = conn.prepareStatement(getIdSql)) {
+                ps.setString(1, userName);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int userId = rs.getInt("User_id");
 
-        Date now = new Date();
-        String date = DateFormat.getDateInstance().format(now);
-        String time = new SimpleDateFormat("HH:mm:ss").format(now);
-
-        String sql = "INSERT INTO logs (User_name, Date, Status) VALUES (?, ?, ?)";
-
-        try (PreparedStatement p = conn.prepareStatement(sql)) {
-            p.setString(1, userName);
-            p.setString(2, time + " / " + date);
-            p.setString(3, "Logged in");
-            p.execute();
+                    String sql = "INSERT INTO logs (User_id, Login_Date, Status) VALUES (?, ?, ?)";
+                    try (PreparedStatement p = conn.prepareStatement(sql)) {
+                        p.setInt(1, userId);
+                        p.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                        p.setString(3, "Logged in");
+                        p.execute();
+                    }
+                }
+            }
         } catch (SQLException ex) {
             showAlert(Alert.AlertType.ERROR, "Logging Error", ex.getMessage());
         }

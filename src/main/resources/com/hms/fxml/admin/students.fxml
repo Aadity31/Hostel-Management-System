@@ -1,113 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.admin.Students">
-   <center>
-        <VBox style="-fx-padding: 20;" BorderPane.alignment="CENTER">
-            <TitledPane expanded="false" text="Add Students">
-                <GridPane hgap="5.0" style="-fx-padding: 10;" vgap="5.0">
+<BorderPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hms.views.users.admin.Students">
+
+    <!-- ───────── Center: Form + Table ───────── -->
+    <center>
+        <VBox style="-fx-padding:20;" BorderPane.alignment="CENTER">
+
+            <!-- ───────── Add / Edit Pane ───────── -->
+            <TitledPane text="Add / Edit Student" expanded="false">
+                <GridPane vgap="5" hgap="5" style="-fx-padding:10;">
+                    <!-- Column widths -->
                     <columnConstraints>
-                        <ColumnConstraints minWidth="100" />
-                        <ColumnConstraints minWidth="200" />
-                        <ColumnConstraints minWidth="100" />
-                        <ColumnConstraints minWidth="200" />
+                        <ColumnConstraints minWidth="110"/>
+                        <ColumnConstraints minWidth="180"/>
+                        <ColumnConstraints minWidth="110"/>
+                        <ColumnConstraints minWidth="180"/>
                     </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                    </rowConstraints>
+
+                    <!-- Row 0 -->
+                    <Label text="First Name:"    GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtFirstName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Last Name:"     GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    <TextField fx:id="txtLastName"  GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
                     <!-- Row 1 -->
-                    <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <TextField fx:id="txtname" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Username:"      GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <TextField fx:id="txtUsername"  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                    <Label text="NIC/Passport:" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                    <TextField fx:id="txtnic" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                    <Label text="Gender:"        GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="txtGender"     GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
                     <!-- Row 2 -->
-                    <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <TextField fx:id="txtaddress" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Student ID:"    GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <TextField fx:id="txtStudentId" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                    <Label text="Contact No:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    <TextField fx:id="txtcontact" onKeyReleased="#txtcontactKeyReleased" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    <Label text="Mobile No:"     GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                    <TextField fx:id="txtMobile"    GridPane.columnIndex="3" GridPane.rowIndex="2"/>
 
                     <!-- Row 3 -->
-                    <Label text="Gender:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                    <ComboBox fx:id="txtgencom" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Email:"         GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <TextField fx:id="txtEmail"     GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-                    <Label text="Email:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                    <TextField fx:id="txtemail" onAction="#txtemailFocusLost" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                    <Label text="Study Program:" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                    <TextField fx:id="txtProgram"   GridPane.columnIndex="3" GridPane.rowIndex="3"/>
 
                     <!-- Row 4 -->
-                    <Label text="Guardian Name:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                    <TextField fx:id="txtguardian" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Room No:"       GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                    <ComboBox fx:id="txtRoomCombo"  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-                    <Label text="Emg Contact:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                    <TextField fx:id="txtemgcontact" onKeyReleased="#txtemgcontactKeyReleased" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-
-                    <!-- Row 5 -->
-                    <Label text="Student ID:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                    <TextField fx:id="txtstuid" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-                    <Label text="Study Programme:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                    <TextField fx:id="txtprogramme" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-
-                    <!-- Row 6 -->
-                    <Label text="Study Year:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <TextField fx:id="txtstuyear" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-                    <Label text="Room No:" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                    <ComboBox fx:id="txtroomcom" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-
-                    <!-- Buttons Row -->
-                    <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 20 0 0 0;" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="6">
-                        <Button fx:id="add_btn" onAction="#add_btnActionPerformed" style="-fx-cursor: hand;" text="Add Record" />
-                        <Button fx:id="update_btn" onAction="#update_btnActionPerformed" style="-fx-cursor: hand;" text="Update" />
-                        <Button fx:id="delete_btn" onAction="#delete_btnActionPerformed" style="-fx-cursor: hand;" text="Delete" />
-                        <Button fx:id="clear_btn" onAction="#clear_btnActionPerformed" style="-fx-cursor: hand;" text="Clear" />
+                    <!-- Buttons -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT"
+                          GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="5"
+                          style="-fx-padding:20 0 0 0;">
+                        <Button fx:id="add_btn"    text="Add"    onAction="#add"/>
+                        <Button fx:id="update_btn" text="Update" onAction="#update"/>
+                        <Button fx:id="delete_btn" text="Delete" onAction="#delete"/>
+                        <Button fx:id="clear_btn"  text="Clear"  onAction="#clear"/>
                     </HBox>
                 </GridPane>
             </TitledPane>
-            <TitledPane text="Student Details">
-                <VBox style="-fx-padding: 20;">
-                    <children>
-                        <TableView fx:id="student_table" onMouseClicked="#student_tableMouseClicked" prefHeight="502.0">
-                            <columns>
-                                <TableColumn fx:id="nameColumn" prefWidth="130.0" text="Name" />
-                                <TableColumn fx:id="addressColumn" prefWidth="150.0" text="Address" />
-                                <TableColumn fx:id="genderColumn" prefWidth="100.0" text="Gender" />
-                                <TableColumn fx:id="guardianColumn" prefWidth="130.0" text="Guardian" />
-                                <TableColumn fx:id="studentIdColumn" prefWidth="120.0" text="Student ID" />
-                                <TableColumn fx:id="studyYearColumn" prefWidth="130.0" text="Study Year" />
-                                <TableColumn fx:id="nicColumn" prefWidth="150.0" text="NIC/Passport" />
-                                <TableColumn fx:id="contactColumn" prefWidth="140.0" text="Contact No" />
-                                <TableColumn fx:id="emailColumn" prefWidth="150.0" text="Email" />
-                                <TableColumn fx:id="emgContactColumn" prefWidth="130.0" text="Emg Contact" />
-                                <TableColumn fx:id="programmeColumn" minWidth="-1.0" prefWidth="180.0" text="Study Programme" />
-                                <TableColumn fx:id="roomColumn" prefWidth="100" text="Room No" />
-                            </columns>
-                        </TableView>
-                    </children>
+
+            <!-- ───────── Table Pane ───────── -->
+            <TitledPane text="Students">
+                <VBox style="-fx-padding:20;">
+                    <TableView fx:id="student_table" onMouseClicked="#tableClicked" prefHeight="480">
+                        <columns>
+                            <TableColumn fx:id="firstNameCol"  text="First Name"  prefWidth="120"/>
+                            <TableColumn fx:id="lastNameCol"   text="Last Name"   prefWidth="120"/>
+                            <TableColumn fx:id="genderCol"     text="Gender"      prefWidth="90"/>
+                            <TableColumn fx:id="studentIdCol"  text="Student ID"  prefWidth="110"/>
+                            <TableColumn fx:id="usernameCol"   text="Username"    prefWidth="110"/>
+                            <TableColumn fx:id="mobileCol"     text="Mobile"      prefWidth="110"/>
+                            <TableColumn fx:id="emailCol"      text="Email"       prefWidth="160"/>
+                            <TableColumn fx:id="programCol"    text="Program"     prefWidth="140"/>
+                            <TableColumn fx:id="roomCol"       text="Room No"     prefWidth="90"/>
+                        </columns>
+                    </TableView>
                 </VBox>
             </TitledPane>
+
         </VBox>
-   </center>
+    </center>
 </BorderPane>

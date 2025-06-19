@@ -13,477 +13,258 @@ import javafx.scene.input.MouseEvent;
 import javafx.event.ActionEvent;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 𝗦𝘁𝘂𝗱𝗲𝗻𝘁𝘀 admin controller ‑‑ *adapted to new student table schema*.
+ *
+ * Table `student` now contains (camel‑case → DB snake_case):
+ *   student_id     INT PK    | txtStudentId
+ *   username       VARCHAR   | txtUsername (optional)
+ *   first_name     VARCHAR   | txtFirstName
+ *   last_name      VARCHAR   | txtLastName
+ *   gender         VARCHAR   | txtGender
+ *   mobile_number  VARCHAR   | txtMobile
+ *   email          VARCHAR   | txtEmail
+ *   study_program  VARCHAR   | txtProgram
+ *   room_no        VARCHAR   | txtRoomCombo
+ *   password       VARCHAR   | (not handled here)
+ *
+ * Columns that existed in the old schema (Address, Guardian, NIC, Emg_contact, Study_year
+ * etc.) were dropped, so all related UI fields / SQL parts have been removed.
+ */
 public class Students implements Initializable {
 
-    @FXML private TextField txtname;
-    @FXML private TextField txtaddress;
-    @FXML private ComboBox<String> txtgencom;
-    @FXML private TextField txtguardian;
-    @FXML private TextField txtstuid;
-    @FXML private TextField txtstuyear;
-    @FXML private TextField txtnic;
-    @FXML private TextField txtcontact;
-    @FXML private TextField txtemail;
-    @FXML private TextField txtemgcontact;
-    @FXML private TextField txtprogramme;
-    @FXML private ComboBox<String> txtroomcom;
+    /* ────────── UI FIELDS ────────── */
+    @FXML private TextField txtFirstName;
+    @FXML private TextField txtLastName;
+    @FXML private ComboBox<String> txtGender;
+    @FXML private TextField txtStudentId;
+    @FXML private TextField txtUsername;
+    @FXML private TextField txtMobile;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtProgram;
+    @FXML private ComboBox<String> txtRoomCombo;
 
-    @FXML private Button add_btn;
-    @FXML private Button update_btn;
-    @FXML private Button delete_btn;
-    @FXML private Button clear_btn;
+    @FXML private Button add_btn, update_btn, delete_btn, clear_btn;
 
+    /* ────────── TABLE ────────── */
     @FXML private TableView<Student> student_table;
-    @FXML private TableColumn<Student, String> nameColumn;
-    @FXML private TableColumn<Student, String> addressColumn;
-    @FXML private TableColumn<Student, String> genderColumn;
-    @FXML private TableColumn<Student, String> guardianColumn;
-    @FXML private TableColumn<Student, String> studentIdColumn;
-    @FXML private TableColumn<Student, String> studyYearColumn;
-    @FXML private TableColumn<Student, String> nicColumn;
-    @FXML private TableColumn<Student, String> contactColumn;
-    @FXML private TableColumn<Student, String> emailColumn;
-    @FXML private TableColumn<Student, String> emgContactColumn;
-    @FXML private TableColumn<Student, String> programmeColumn;
-    @FXML private TableColumn<Student, String> roomColumn;
+    @FXML private TableColumn<Student,String> firstNameCol, lastNameCol, genderCol, studentIdCol,
+                                              usernameCol, mobileCol, emailCol, programCol, roomCol;
 
-    private Connection conn = null;
-    private ResultSet rs = null;
-    private PreparedStatement pst = null;
-    private ObservableList<Student> studentList = FXCollections.observableArrayList();
+    /* ────────── DB ────────── */
+    private Connection conn;
+    private PreparedStatement pst;
+    private ResultSet rs;
+    private final ObservableList<Student> studentList = FXCollections.observableArrayList();
 
-    private static final String EMAIL_PATTERN
-            = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+    /* ────────── Validation ────────── */
+    private static final Pattern EMAIL_REGEX = Pattern.compile(
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"+
+            "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
 
-    private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @Override public void initialize(URL url, ResourceBundle rb) {
         conn = DB.connect();
-        txtname.requestFocus();
-        fillCombobox();
-        setupTableColumns();
 
-        txtgencom.setItems(FXCollections.observableArrayList("Select", "Male", "Female"));
-        txtgencom.setValue("Select");
-
+        txtGender.setItems(FXCollections.observableArrayList("Select", "Male", "Female"));
+        txtGender.setValue("Select");
+        fillRoomCombo();
+        setupTable();
         updateTable();
     }
 
-    private void setupTableColumns() {
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-        genderColumn.setCellValueFactory(new PropertyValueFactory<>("gender"));
-        guardianColumn.setCellValueFactory(new PropertyValueFactory<>("guardian"));
-        studentIdColumn.setCellValueFactory(new PropertyValueFactory<>("studentId"));
-        studyYearColumn.setCellValueFactory(new PropertyValueFactory<>("studyYear"));
-        nicColumn.setCellValueFactory(new PropertyValueFactory<>("nic"));
-        contactColumn.setCellValueFactory(new PropertyValueFactory<>("contact"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        emgContactColumn.setCellValueFactory(new PropertyValueFactory<>("emgContact"));
-        programmeColumn.setCellValueFactory(new PropertyValueFactory<>("programme"));
-        roomColumn.setCellValueFactory(new PropertyValueFactory<>("roomNo"));
-
+    /* ────────── Setup TableView ────────── */
+    private void setupTable() {
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        lastNameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        studentIdCol.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
+        mobileCol.setCellValueFactory(new PropertyValueFactory<>("mobile"));
+        emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+        programCol.setCellValueFactory(new PropertyValueFactory<>("program"));
+        roomCol.setCellValueFactory(new PropertyValueFactory<>("roomNo"));
         student_table.setItems(studentList);
     }
 
-    private void fillCombobox() {
-        try {
-            String sql = "select * from rooms where Room_status='Available'";
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
+    /* ────────── Populate available rooms ────────── */
+    private void fillRoomCombo() {
+        try (PreparedStatement p = conn.prepareStatement(
+                "SELECT Room_id FROM rooms WHERE Room_status='Available'");
+             ResultSet r = p.executeQuery()) {
 
-            ObservableList<String> roomList = FXCollections.observableArrayList();
-            roomList.add("Select");
-
-            while (rs.next()) {
-                String roomno = rs.getString("Room_id");
-                roomList.add(roomno);
-            }
-
-            txtroomcom.setItems(roomList);
-            txtroomcom.setValue("Select");
-
-        } catch (SQLException e) {
-            showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-            }
-        }
+            ObservableList<String> rooms = FXCollections.observableArrayList();
+            rooms.add("Select");
+            while (r.next()) rooms.add(r.getString(1));
+            txtRoomCombo.setItems(rooms);
+            txtRoomCombo.setValue("Select");
+        } catch (SQLException e) { showAlert("Error", e.getMessage(), Alert.AlertType.ERROR); }
     }
 
+    /* ────────── Refresh table data ────────── */
     private void updateTable() {
-        try {
-            String sql = "select * from student";
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
-
+        String sql = "SELECT * FROM student";
+        try (PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet r = p.executeQuery()) {
             studentList.clear();
-
-            while (rs.next()) {
-                Student student = new Student(
-                        rs.getString("Name"),
-                        rs.getString("Address"),
-                        rs.getString("Gender"),
-                        rs.getString("Guardian"),
-                        rs.getString("Student_id"),
-                        rs.getString("Study_year"),
-                        rs.getString("NIC"),
-                        rs.getString("Contact_no"),
-                        rs.getString("Email"),
-                        rs.getString("Emg_contact"),
-                        rs.getString("Programme"),
-                        rs.getString("Room_no")
-                );
-                studentList.add(student);
+            while (r.next()) {
+                studentList.add(new Student(
+                        r.getString("first_name"),
+                        r.getString("last_name"),
+                        r.getString("gender"),
+                        r.getString("student_id"),
+                        r.getString("username"),
+                        r.getString("mobile_number"),
+                        r.getString("email"),
+                        r.getString("study_program"),
+                        r.getString("room_no")
+                ));
             }
-
-        } catch (SQLException e) {
-            showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-            }
-        }
+        } catch (SQLException e) { showAlert("Error", e.getMessage(), Alert.AlertType.ERROR); }
     }
 
-    @FXML
-    private void clear_btnActionPerformed(ActionEvent event) {
-        txtname.setText("");
-        txtaddress.setText("");
-        txtcontact.setText("");
-        txtemail.setText("");
-        txtemgcontact.setText("");
-        txtguardian.setText("");
-        txtnic.setText("");
-        txtprogramme.setText("");
-        txtstuid.setText("");
-        txtstuyear.setText("");
-        txtgencom.setValue("Select");
-        txtroomcom.setValue("Select");
+    /* ────────── CRUD ────────── */
+
+    @FXML private void add(ActionEvent e) {
+        if (!validateFields()) return;
+        String sql = "INSERT INTO student (first_name,last_name,gender,student_id,username,mobile_number,email,study_program,room_no,password) "+
+                     "VALUES (?,?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, txtFirstName.getText());
+            p.setString(2, txtLastName.getText());
+            p.setString(3, txtGender.getValue());
+            p.setString(4, txtStudentId.getText());
+            p.setString(5, txtUsername.getText());
+            p.setString(6, txtMobile.getText());
+            p.setString(7, txtEmail.getText());
+            p.setString(8, txtProgram.getText());
+            p.setString(9, txtRoomCombo.getValue());
+            p.setString(10, "default"); // or ask user – we don't handle passwords here
+            p.executeUpdate();
+            showAlert("Success", "Student added", Alert.AlertType.INFORMATION);
+            log("Added new student");
+            updateTable();
+        } catch (SQLException ex) { showAlert("Error", ex.getMessage(), Alert.AlertType.ERROR); }
     }
 
-    @FXML
-    private void delete_btnActionPerformed(ActionEvent event) {
-        if (validateFields()) {
-            if (validateContactNumbers()) {
-                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmAlert.setTitle("Delete");
-                confirmAlert.setHeaderText("Are you sure you want to delete record?");
-
-                if (confirmAlert.showAndWait().get() == ButtonType.OK) {
-                    logActivity("Student Details Deleted");
-
-                    try {
-                        String sql = "delete from student where Student_id=?";
-                        pst = conn.prepareStatement(sql);
-                        pst.setString(1, txtstuid.getText());
-                        pst.execute();
-
-                        showAlert("Success", "Record Deleted", Alert.AlertType.INFORMATION);
-                        updateTable();
-
-                    } catch (SQLException e) {
-                        showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                    } finally {
-                        try {
-                            if (rs != null) rs.close();
-                            if (pst != null) pst.close();
-                        } catch (SQLException e) {
-                            showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                        }
-                    }
-                }
-            } else {
-                showAlert("Error", "Enter valid contact number", Alert.AlertType.ERROR);
-            }
-        } else {
-            showAlert("Error", "One or more required fields are empty", Alert.AlertType.ERROR);
-        }
+    @FXML private void update(ActionEvent e) {
+        if (!validateFields()) return;
+        String sql = "UPDATE student SET first_name=?,last_name=?,gender=?,username=?,mobile_number=?,email=?,study_program=?,room_no=? WHERE student_id=?";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, txtFirstName.getText());
+            p.setString(2, txtLastName.getText());
+            p.setString(3, txtGender.getValue());
+            p.setString(4, txtUsername.getText());
+            p.setString(5, txtMobile.getText());
+            p.setString(6, txtEmail.getText());
+            p.setString(7, txtProgram.getText());
+            p.setString(8, txtRoomCombo.getValue());
+            p.setString(9, txtStudentId.getText());
+            p.executeUpdate();
+            showAlert("Success", "Record updated", Alert.AlertType.INFORMATION);
+            log("Updated student details");
+            updateTable();
+        } catch (SQLException ex) { showAlert("Error", ex.getMessage(), Alert.AlertType.ERROR); }
     }
 
-    @FXML
-    private void update_btnActionPerformed(ActionEvent event) {
-        if (validateFields()) {
-            if (validateContactNumbers()) {
-                Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmAlert.setTitle("Update Record");
-                confirmAlert.setHeaderText("Are you sure you want to update?");
-
-                if (confirmAlert.showAndWait().get() == ButtonType.OK) {
-                    try {
-                        String sql = "update student set Name=?, Address=?, Gender=?, Guardian=?, Student_id=?, Study_year=?, NIC=?, Contact_no=?, Email=?, Emg_contact=?, Programme=?, Room_no=? where Student_id=?";
-
-                        pst = conn.prepareStatement(sql);
-                        pst.setString(1, txtname.getText());
-                        pst.setString(2, txtaddress.getText());
-                        pst.setString(3, txtgencom.getValue());
-                        pst.setString(4, txtguardian.getText());
-                        pst.setString(5, txtstuid.getText());
-                        pst.setString(6, txtstuyear.getText());
-                        pst.setString(7, txtnic.getText());
-                        pst.setString(8, txtcontact.getText());
-                        pst.setString(9, txtemail.getText());
-                        pst.setString(10, txtemgcontact.getText());
-                        pst.setString(11, txtprogramme.getText());
-                        pst.setString(12, txtroomcom.getValue());
-                        pst.setString(13, txtstuid.getText());
-
-                        pst.execute();
-                        showAlert("Success", "Record Updated", Alert.AlertType.INFORMATION);
-
-                        logActivity("Student Details Updated");
-                        updateTable();
-
-                    } catch (SQLException e) {
-                        showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                    } finally {
-                        try {
-                            if (rs != null) rs.close();
-                            if (pst != null) pst.close();
-                        } catch (SQLException e) {
-                            showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                        }
-                    }
-                }
-            } else {
-                showAlert("Error", "Enter valid contact number", Alert.AlertType.ERROR);
-            }
-        } else {
-            showAlert("Error", "One or more required fields are empty", Alert.AlertType.ERROR);
-        }
+    @FXML private void delete(ActionEvent e) {
+        if (txtStudentId.getText().isEmpty()) { showAlert("Error", "Student ID required", Alert.AlertType.ERROR); return; }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete this student?", ButtonType.OK, ButtonType.CANCEL);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        try (PreparedStatement p = conn.prepareStatement("DELETE FROM student WHERE student_id=?")) {
+            p.setString(1, txtStudentId.getText());
+            p.executeUpdate();
+            showAlert("Success", "Record deleted", Alert.AlertType.INFORMATION);
+            log("Deleted student");
+            updateTable();
+        } catch (SQLException ex) { showAlert("Error", ex.getMessage(), Alert.AlertType.ERROR); }
     }
 
-    @FXML
-    private void add_btnActionPerformed(ActionEvent event) {
-        if (validateFields()) {
-            if (validateContactNumbers()) {
-                try {
-                    String sql = "insert into student (Name,Address,Gender,Guardian,Student_id,Study_year,NIC,Contact_no,Email,Emg_contact,Programme,Room_no) values (?,?,?,?,?,?,?,?,?,?,?,?)";
-
-                    pst = conn.prepareStatement(sql);
-                    pst.setString(1, txtname.getText());
-                    pst.setString(2, txtaddress.getText());
-                    pst.setString(3, txtgencom.getValue());
-                    pst.setString(4, txtguardian.getText());
-                    pst.setString(5, txtstuid.getText());
-                    pst.setString(6, txtstuyear.getText());
-                    pst.setString(7, txtnic.getText());
-                    pst.setString(8, txtcontact.getText());
-                    pst.setString(9, txtemail.getText());
-                    pst.setString(10, txtemgcontact.getText());
-                    pst.setString(11, txtprogramme.getText());
-                    pst.setString(12, txtroomcom.getValue());
-
-                    pst.execute();
-                    showAlert("Success", "Data is saved successfully", Alert.AlertType.INFORMATION);
-
-                    logActivity("New Student Added");
-                    updateTable();
-
-                } catch (SQLException e) {
-                    showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                } finally {
-                    try {
-                        if (rs != null) rs.close();
-                        if (pst != null) pst.close();
-                    } catch (SQLException e) {
-                        showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
-                    }
-                }
-            } else {
-                showAlert("Error", "Enter valid contact number", Alert.AlertType.ERROR);
-            }
-        } else {
-            showAlert("Error", "One or more required fields are empty", Alert.AlertType.ERROR);
-        }
+    @FXML private void clear(ActionEvent e) {
+        txtFirstName.clear(); txtLastName.clear(); txtStudentId.clear(); txtUsername.clear();
+        txtMobile.clear(); txtEmail.clear(); txtProgram.clear();
+        txtGender.setValue("Select"); txtRoomCombo.setValue("Select");
     }
 
-    @FXML
-    private void student_tableMouseClicked(MouseEvent event) {
-        Student selectedStudent = student_table.getSelectionModel().getSelectedItem();
-        if (selectedStudent != null) {
-            txtname.setText(selectedStudent.getName());
-            txtaddress.setText(selectedStudent.getAddress());
-            txtgencom.setValue(selectedStudent.getGender());
-            txtguardian.setText(selectedStudent.getGuardian());
-            txtstuid.setText(selectedStudent.getStudentId());
-            txtstuyear.setText(selectedStudent.getStudyYear());
-            txtnic.setText(selectedStudent.getNic());
-            txtcontact.setText(selectedStudent.getContact());
-            txtemail.setText(selectedStudent.getEmail());
-            txtemgcontact.setText(selectedStudent.getEmgContact());
-            txtprogramme.setText(selectedStudent.getProgramme());
-            txtroomcom.setValue(selectedStudent.getRoomNo());
-        }
+    /* ────────── Table click ────────── */
+    @FXML private void tableClicked(MouseEvent e) {
+        Student s = student_table.getSelectionModel().getSelectedItem();
+        if (s == null) return;
+        txtFirstName.setText(s.getFirstName());
+        txtLastName.setText(s.getLastName());
+        txtGender.setValue(s.getGender());
+        txtStudentId.setText(s.getStudentId());
+        txtUsername.setText(s.getUsername());
+        txtMobile.setText(s.getMobile());
+        txtEmail.setText(s.getEmail());
+        txtProgram.setText(s.getProgram());
+        txtRoomCombo.setValue(s.getRoomNo());
     }
 
-    @FXML
-    private void txtcontactKeyReleased(KeyEvent event) {
-        try {
-            if (!txtcontact.getText().isEmpty()) {
-                Integer.parseInt(txtcontact.getText());
-            }
-        } catch (NumberFormatException e) {
-            txtcontact.setText("");
-            showAlert("Error", "You can add numbers only", Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void txtemgcontactKeyReleased(KeyEvent event) {
-        try {
-            if (!txtemgcontact.getText().isEmpty()) {
-                Integer.parseInt(txtemgcontact.getText());
-            }
-        } catch (NumberFormatException e) {
-            txtemgcontact.setText("");
-            showAlert("Error", "You can add numbers only", Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void txtemailFocusLost(ActionEvent event) {
-        String email = txtemail.getText();
-        if (!email.isEmpty()) {
-            Matcher matcher = pattern.matcher(email);
-            if (!matcher.matches()) {
-                txtemail.setText("");
-                showAlert("Error", "Enter valid email", Alert.AlertType.ERROR);
-            }
-        }
-    }
-
+    /* ────────── Validation helpers ────────── */
     private boolean validateFields() {
-        return !(txtname.getText().isEmpty() || txtaddress.getText().isEmpty() ||
-                txtcontact.getText().isEmpty() || txtguardian.getText().isEmpty() ||
-                txtemgcontact.getText().isEmpty() || txtnic.getText().isEmpty() ||
-                txtprogramme.getText().isEmpty() || txtstuid.getText().isEmpty() ||
-                txtstuyear.getText().isEmpty() || txtemail.getText().isEmpty() ||
-                txtgencom.getValue().equals("Select") || txtroomcom.getValue().equals("Select"));
-    }
-
-    private boolean validateContactNumbers() {
-        return txtcontact.getText().length() == 10 && txtemgcontact.getText().length() == 10;
-    }
-
-    private void logActivity(String activity) {
-        Date currentDate = GregorianCalendar.getInstance().getTime();
-        DateFormat df = DateFormat.getDateInstance();
-        String dateString = df.format(currentDate);
-
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String timeString = sdf.format(d);
-
-        try {
-            String reg = "insert into logs (User_id, Date, Status) values (?, ?, ?)";
-            pst = conn.prepareStatement(reg);
-            pst.setInt(1, Emp.UserId);
-            pst.setString(2, timeString + " / " + dateString);
-            pst.setString(3, activity);
-            pst.execute();
-        } catch (SQLException e) {
-            showAlert("Error", e.getMessage(), Alert.AlertType.ERROR);
+        if (txtFirstName.getText().isEmpty() || txtLastName.getText().isEmpty() ||
+            txtStudentId.getText().isEmpty() || txtUsername.getText().isEmpty() ||
+            txtMobile.getText().isEmpty() || txtEmail.getText().isEmpty() ||
+            txtProgram.getText().isEmpty() || txtGender.getValue().equals("Select") ||
+            txtRoomCombo.getValue().equals("Select")) {
+            showAlert("Error", "Please fill all required fields", Alert.AlertType.ERROR);
+            return false;
         }
+        if (txtMobile.getText().length() != 10) {
+            showAlert("Error", "Mobile number must be 10 digits", Alert.AlertType.ERROR);
+            return false;
+        }
+        Matcher m = EMAIL_REGEX.matcher(txtEmail.getText());
+        if (!m.matches()) {
+            showAlert("Error", "Invalid email", Alert.AlertType.ERROR);
+            return false;
+        }
+        return true;
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /* ────────── Log helper ────────── */
+    private void log(String activity) {
+        String sql = "INSERT INTO logs (User_id, Date, Status) VALUES (?,?,?)";
+        String timestamp = new SimpleDateFormat("HH:mm:ss / dd-MMM-yyyy").format(new Date());
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, Emp.UserId);
+            p.setString(2, timestamp);
+            p.setString(3, activity);
+            p.execute();
+        } catch (SQLException ignored) {}
     }
 
-    // Student model class
+    /* ────────── Alert helper ────────── */
+    private void showAlert(String title, String msg, Alert.AlertType t) {
+        Alert a = new Alert(t);
+        a.setTitle(title); a.setHeaderText(null); a.setContentText(msg); a.showAndWait();
+    }
+
+    /* ────────── Inner model ────────── */
     public static class Student {
-        private String name;
-        private String address;
-        private String gender;
-        private String guardian;
-        private String studentId;
-        private String studyYear;
-        private String nic;
-        private String contact;
-        private String email;
-        private String emgContact;
-        private String programme;
-        private String roomNo;
-
-        public Student(String name, String address, String gender, String guardian, String studentId,
-                       String studyYear, String nic, String contact, String email, String emgContact,
-                       String programme, String roomNo) {
-            this.name = name;
-            this.address = address;
-            this.gender = gender;
-            this.guardian = guardian;
-            this.studentId = studentId;
-            this.studyYear = studyYear;
-            this.nic = nic;
-            this.contact = contact;
-            this.email = email;
-            this.emgContact = emgContact;
-            this.programme = programme;
-            this.roomNo = roomNo;
+        private final String firstName, lastName, gender, studentId, username,
+                             mobile, email, program, roomNo;
+        public Student(String fn,String ln,String g,String id,String un,String mob,String em,String prog,String room){
+            firstName=fn; lastName=ln; gender=g; studentId=id; username=un;
+            mobile=mob; email=em; program=prog; roomNo=room;
         }
-
-        // Getters and setters
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-
-        public String getAddress() { return address; }
-        public void setAddress(String address) { this.address = address; }
-
-        public String getGender() { return gender; }
-        public void setGender(String gender) { this.gender = gender; }
-
-        public String getGuardian() { return guardian; }
-        public void setGuardian(String guardian) { this.guardian = guardian; }
-
-        public String getStudentId() { return studentId; }
-        public void setStudentId(String studentId) { this.studentId = studentId; }
-
-        public String getStudyYear() { return studyYear; }
-        public void setStudyYear(String studyYear) { this.studyYear = studyYear; }
-
-        public String getNic() { return nic; }
-        public void setNic(String nic) { this.nic = nic; }
-
-        public String getContact() { return contact; }
-        public void setContact(String contact) { this.contact = contact; }
-
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-
-        public String getEmgContact() { return emgContact; }
-        public void setEmgContact(String emgContact) { this.emgContact = emgContact; }
-
-        public String getProgramme() { return programme; }
-        public void setProgramme(String programme) { this.programme = programme; }
-
-        public String getRoomNo() { return roomNo; }
-        public void setRoomNo(String roomNo) { this.roomNo = roomNo; }
+        public String getFirstName(){return firstName;}
+        public String getLastName(){return lastName;}
+        public String getGender(){return gender;}
+        public String getStudentId(){return studentId;}
+        public String getUsername(){return username;}
+        public String getMobile(){return mobile;}
+        public String getEmail(){return email;}
+        public String getProgram(){return program;}
+        public String getRoomNo(){return roomNo;}
     }
 }

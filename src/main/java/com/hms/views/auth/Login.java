@@ -88,21 +88,20 @@ public class Login implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", "Invalid user type."); return;
         }
 
-        String sql = "SELECT Username FROM admin " +
-                "WHERE BINARY Username=? AND BINARY Password=? AND User_type=?";
+        String sql = "SELECT Username FROM " + table + " WHERE BINARY Username=? AND BINARY Password=?";
+
 
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, username);
             pst.setString(2, password);
-            pst.setString(3, userType);
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {                      // ✅ credentials valid
                     Emp.UserId   = 0;                // no numeric id in this schema
                     Emp.UserName = username;
 
-                    logLogin(username);
+                    logLogin(username, table);
                     openDashboard(userType);
                     ((Stage) btnLogin.getScene().getWindow()).close();
                 } else {
@@ -119,15 +118,14 @@ public class Login implements Initializable {
 
     /* ───────── LOG ACTIVITY ───────── */
 
-    private void logLogin(String userName) {
+    private void logLogin(String username, String table) {
         try {
-            // Get User_id from admin table
-            String getIdSql = "SELECT User_id FROM admin WHERE Username=?";
+            String getIdSql = "SELECT student_id FROM " + table + " WHERE Username=?";
             try (PreparedStatement ps = conn.prepareStatement(getIdSql)) {
-                ps.setString(1, userName);
+                ps.setString(1, username);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    int userId = rs.getInt("User_id");
+                    int userId = rs.getInt(1); // Assuming 'student_id' or 'staff_id'
 
                     String sql = "INSERT INTO logs (User_id, Login_Date, Status) VALUES (?, ?, ?)";
                     try (PreparedStatement p = conn.prepareStatement(sql)) {
@@ -142,6 +140,7 @@ public class Login implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Logging Error", ex.getMessage());
         }
     }
+
 
     /* ───────── OPEN DASHBOARD ───────── */
     private void openDashboard(String userType) {

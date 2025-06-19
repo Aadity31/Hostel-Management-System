@@ -63,6 +63,21 @@
                                                             <Label fx:id="lblStudentIdError" styleClass="error-label" visible="false" />
                                                         </children>
                                                     </VBox>
+                                                    
+                                                    <!-- Username Field -->
+													<VBox>
+													    <children>
+													        <HBox spacing="5.0">
+													            <children>
+													                <Label styleClass="field-label" text="Username" />
+													                <Label styleClass="required-indicator" text="*" />
+													            </children>
+													        </HBox>
+													        <TextField fx:id="txtUsername" promptText="Enter your username" styleClass="custom-text-field" />
+													        <Label fx:id="lblUsernameError" styleClass="error-label" visible="false" />
+													    </children>
+													</VBox>
+
 
                                                     <!-- Name Fields Row -->
                                                     <HBox spacing="10.0">

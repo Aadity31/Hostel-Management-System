@@ -18,13 +18,13 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Signup {
 
     @FXML private TextField txtStudentId;
+    @FXML private TextField txtUsername;
     @FXML private TextField txtFirstName;
     @FXML private TextField txtLastName;
     @FXML private TextField txtMobileNumber;
@@ -42,8 +42,8 @@ public class Signup {
     @FXML private ImageView hideComPasswordIcon;
     @FXML private Hyperlink linkBackToLogin;
 
-    // Error labels for validation
     @FXML private Label lblStudentIdError;
+    @FXML private Label lblUsernameError;
     @FXML private Label lblFirstNameError;
     @FXML private Label lblLastNameError;
     @FXML private Label lblMobileError;
@@ -53,57 +53,39 @@ public class Signup {
     @FXML private Label lblPasswordError;
     @FXML private Label lblComPasswordError;
 
-    private Connection conn;
-    private PreparedStatement pst;
+    private final Connection conn = DB.connect();
 
-    // Email validation pattern
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$");
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$");
+    private static final Pattern USERNAME_PATTERN =
+            Pattern.compile("^[A-Za-z0-9._-]{4,20}$");
 
     public void initialize() {
-        // Initialize gender dropdown
-        ObservableList<String> genders = FXCollections.observableArrayList(
-                "Select Gender", "Male", "Female", "Other"
-        );
-        combGender.setItems(genders);
+        combGender.setItems(FXCollections.observableArrayList("Select Gender", "Male", "Female", "Other"));
         combGender.setValue("Select Gender");
 
-        // Initialize study program dropdown
-        ObservableList<String> programs = FXCollections.observableArrayList(
-                "Select Program",
-                "Computer Science",
-                "Information Technology",
-                "Software Engineering",
-                "Data Science",
-                "Cybersecurity",
-                "Artificial Intelligence",
-                "Business Administration",
-                "Engineering",
-                "Medicine",
-                "Law",
-                "Arts"
-        );
-        combStudyProgram.setItems(programs);
+        combStudyProgram.setItems(FXCollections.observableArrayList(
+                "Select Program", "Computer Science", "Information Technology", "Software Engineering",
+                "Data Science", "Cybersecurity", "Artificial Intelligence",
+                "Business Administration", "Engineering", "Medicine", "Law", "Arts"
+        ));
         combStudyProgram.setValue("Select Program");
 
-        conn = DB.connect();
-
-        // Hide password visibility icons initially
         hidePasswordIcon.setVisible(false);
         hideComPasswordIcon.setVisible(false);
-
-        // Hide visible password fields initially
         txtVisiblePassword.setVisible(false);
         txtVisiblePassword.setManaged(false);
         txtVisibleComPassword.setVisible(false);
         txtVisibleComPassword.setManaged(false);
 
-        // Initialize error labels as invisible
         hideAllErrorLabels();
     }
 
     private void hideAllErrorLabels() {
         lblStudentIdError.setVisible(false);
+        lblUsernameError.setVisible(false);
         lblFirstNameError.setVisible(false);
         lblLastNameError.setVisible(false);
         lblMobileError.setVisible(false);
@@ -117,176 +99,170 @@ public class Signup {
     @FXML
     private void handleRegister() {
         hideAllErrorLabels();
-        boolean isValid = true;
-
-        String studentId = txtStudentId.getText().trim();
-        String firstName = txtFirstName.getText().trim();
-        String lastName = txtLastName.getText().trim();
-        String mobileNumber = txtMobileNumber.getText().trim();
-        String emailId = txtEmailId.getText().trim();
-        String gender = combGender.getValue();
-        String studyProgram = combStudyProgram.getValue();
-        String password = txtPassword.getText();
-        String comPassword = txtComPassword.getText();
-
-        // Validate Student ID
-        if (studentId.isEmpty()) {
-            lblStudentIdError.setText("Student ID is required");
-            lblStudentIdError.setVisible(true);
-            isValid = false;
-        } else if (!studentId.matches("^[0-9]+$")) {
-            lblStudentIdError.setText("Student ID should contain only numbers");
-            lblStudentIdError.setVisible(true);
-            isValid = false;
-        } else if (isStudentIdExists(studentId)) {
-            lblStudentIdError.setText("Student ID already exists");
-            lblStudentIdError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate First Name
-        if (firstName.isEmpty()) {
-            lblFirstNameError.setText("First name is required");
-            lblFirstNameError.setVisible(true);
-            isValid = false;
-        } else if (!firstName.matches("^[a-zA-Z\\s]+$")) {
-            lblFirstNameError.setText("First name should contain only letters");
-            lblFirstNameError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Last Name
-        if (lastName.isEmpty()) {
-            lblLastNameError.setText("Last name is required");
-            lblLastNameError.setVisible(true);
-            isValid = false;
-        } else if (!lastName.matches("^[a-zA-Z\\s]+$")) {
-            lblLastNameError.setText("Last name should contain only letters");
-            lblLastNameError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Mobile Number
-        if (mobileNumber.isEmpty()) {
-            lblMobileError.setText("Mobile number is required");
-            lblMobileError.setVisible(true);
-            isValid = false;
-        } else if (!mobileNumber.matches("^[0-9]{10}$")) {
-            lblMobileError.setText("Mobile number should be 10 digits");
-            lblMobileError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Email
-        if (emailId.isEmpty()) {
-            lblEmailError.setText("Email is required");
-            lblEmailError.setVisible(true);
-            isValid = false;
-        } else if (!EMAIL_PATTERN.matcher(emailId).matches()) {
-            lblEmailError.setText("Please enter a valid email address");
-            lblEmailError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Gender
-        if (gender == null || gender.equals("Select Gender")) {
-            lblGenderError.setText("Please select gender");
-            lblGenderError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Study Program
-        if (studyProgram == null || studyProgram.equals("Select Program")) {
-            lblProgramError.setText("Please select study program");
-            lblProgramError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Password
-        if (password.isEmpty()) {
-            lblPasswordError.setText("Password is required");
-            lblPasswordError.setVisible(true);
-            isValid = false;
-        } else if (password.length() < 6) {
-            lblPasswordError.setText("Password must be at least 6 characters");
-            lblPasswordError.setVisible(true);
-            isValid = false;
-        }
-
-        // Validate Confirm Password
-        if (comPassword.isEmpty()) {
-            lblComPasswordError.setText("Please confirm your password");
-            lblComPasswordError.setVisible(true);
-            isValid = false;
-        } else if (!password.equals(comPassword)) {
-            lblComPasswordError.setText("Passwords do not match");
-            lblComPasswordError.setVisible(true);
-            isValid = false;
-        }
-
-        if (!isValid) {
+        if (conn == null) {
+            showAlert(Alert.AlertType.ERROR, "Connection Error", "Database connection not available.");
             return;
         }
 
-        try {
-            // Insert into user table with new fields
-            String sql = "INSERT INTO user(Student_id, First_name, Last_name, Mobile_number, Email, Gender, Study_program, Password, User_type) VALUES(?,?,?,?,?,?,?,?,?)";
-            pst = conn.prepareStatement(sql);
+        boolean isValid = true;
+
+        String studentId = txtStudentId.getText().trim();
+        String username = txtUsername.getText().trim();
+        String firstName = txtFirstName.getText().trim();
+        String lastName = txtLastName.getText().trim();
+        String mobile = txtMobileNumber.getText().trim();
+        String email = txtEmailId.getText().trim();
+        String gender = combGender.getValue();
+        String program = combStudyProgram.getValue();
+        String password = txtPassword.getText();
+        String comPassword = txtComPassword.getText();
+
+        // Validation
+        if (username.isEmpty()) {
+            showError(lblUsernameError, "Username is required");
+            isValid = false;
+        } else if (!USERNAME_PATTERN.matcher(username).matches()) {
+            showError(lblUsernameError, "4–20 chars: letters, digits, . _ -");
+            isValid = false;
+        } else if (exists("SELECT Username FROM student WHERE Username = ?", username)) {
+            showError(lblUsernameError, "Username already taken");
+            isValid = false;
+        }
+
+        if (studentId.isEmpty()) {
+            showError(lblStudentIdError, "Student ID is required");
+            isValid = false;
+        } else if (!studentId.matches("\\d+")) {
+            showError(lblStudentIdError, "Only digits allowed");
+            isValid = false;
+        } else if (exists("SELECT Student_id FROM student WHERE Student_id = ?", studentId)) {
+            showError(lblStudentIdError, "Student ID already exists");
+            isValid = false;
+        }
+
+        if (firstName.isEmpty()) {
+            showError(lblFirstNameError, "First name required");
+            isValid = false;
+        } else if (!firstName.matches("[a-zA-Z\\s]+")) {
+            showError(lblFirstNameError, "Only letters allowed");
+            isValid = false;
+        }
+
+        if (lastName.isEmpty()) {
+            showError(lblLastNameError, "Last name required");
+            isValid = false;
+        } else if (!lastName.matches("[a-zA-Z\\s]+")) {
+            showError(lblLastNameError, "Only letters allowed");
+            isValid = false;
+        }
+
+        if (mobile.isEmpty()) {
+            showError(lblMobileError, "Mobile required");
+            isValid = false;
+        } else if (!mobile.matches("\\d{10}")) {
+            showError(lblMobileError, "Must be 10 digits");
+            isValid = false;
+        } else if (exists("SELECT Mobile_number FROM student WHERE Mobile_number = ?", mobile)) {
+            showError(lblMobileError, "Mobile already registered");
+            isValid = false;
+        }
+
+        if (email.isEmpty()) {
+            showError(lblEmailError, "Email required");
+            isValid = false;
+        } else if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showError(lblEmailError, "Invalid email");
+            isValid = false;
+        } else if (exists("SELECT Email FROM student WHERE Email = ?", email)) {
+            showError(lblEmailError, "Email already used");
+            isValid = false;
+        }
+
+        if (gender == null || gender.equals("Select Gender")) {
+            showError(lblGenderError, "Select gender");
+            isValid = false;
+        }
+
+        if (program == null || program.equals("Select Program")) {
+            showError(lblProgramError, "Select program");
+            isValid = false;
+        }
+
+        if (password.isEmpty()) {
+            showError(lblPasswordError, "Password required");
+            isValid = false;
+        } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            showError(lblPasswordError, "Weak password");
+            isValid = false;
+        }
+
+        if (comPassword.isEmpty()) {
+            showError(lblComPasswordError, "Confirm password");
+            isValid = false;
+        } else if (!password.equals(comPassword)) {
+            showError(lblComPasswordError, "Passwords do not match");
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // Insert
+        String sql = "INSERT INTO student(Student_id, Username, First_name, Last_name, Mobile_number, Email, Gender, Study_program, Password) VALUES (?,?,?,?,?,?,?,?,?)";
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, studentId);
-            pst.setString(2, firstName);
-            pst.setString(3, lastName);
-            pst.setString(4, mobileNumber);
-            pst.setString(5, emailId);
-            pst.setString(6, gender);
-            pst.setString(7, studyProgram);
-            pst.setString(8, password);
-            pst.setString(9, "Student");
+            pst.setString(2, username);
+            pst.setString(3, firstName);
+            pst.setString(4, lastName);
+            pst.setString(5, mobile);
+            pst.setString(6, email);
+            pst.setString(7, gender);
+            pst.setString(8, program);
+            pst.setString(9, password); 
             pst.executeUpdate();
-
-            // Log the account creation
-            logAccountCreation(studentId);
-
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Account Created Successfully!");
-
-            // Clear all fields
-            clearAllFields();
-
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error creating account: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "DB Error", e.getMessage());
+            return;
+        }
+
+        logAccountCreation(studentId);
+        showAlert(Alert.AlertType.INFORMATION, "Success", "Account created!");
+        clearAllFields();
+    }
+
+    private void logAccountCreation(String studentId) {
+        String logSql = "INSERT INTO logs (User_id, Date, Status) VALUES ((SELECT User_id FROM student WHERE Student_id = ?), ?, ?)";
+        Date now = new Date();
+        String dateStr = DateFormat.getDateInstance().format(now);
+        String timeStr = new SimpleDateFormat("HH:mm:ss").format(now);
+        try (PreparedStatement pst = conn.prepareStatement(logSql)) {
+            pst.setString(1, studentId);
+            pst.setString(2, timeStr + " / " + dateStr);
+            pst.setString(3, "New account created");
+            pst.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    private boolean isStudentIdExists(String studentId) {
-        try {
-            pst = conn.prepareStatement("SELECT Student_id FROM user WHERE Student_id = ?");
-            pst.setString(1, studentId);
-            ResultSet rs = pst.executeQuery();
-            return rs.next();
+    private boolean exists(String sql, String param) {
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, param);
+            try (ResultSet rs = pst.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
 
-    private void logAccountCreation(String studentId) throws SQLException {
-        Date currentDate = GregorianCalendar.getInstance().getTime();
-        DateFormat df = DateFormat.getDateInstance();
-        String dateString = df.format(currentDate);
-
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        String timeString = sdf.format(d);
-
-        String reg = "INSERT INTO logs (User_id, Date, Status) VALUES ((SELECT User_id FROM user WHERE Student_id = ?), ?, ?)";
-        pst = conn.prepareStatement(reg);
-        pst.setString(1, studentId);
-        pst.setString(2, timeString + " / " + dateString);
-        pst.setString(3, "New account created");
-        pst.execute();
+    private void showError(Label label, String msg) {
+        label.setText(msg);
+        label.setVisible(true);
     }
 
     private void clearAllFields() {
         txtStudentId.clear();
+        txtUsername.clear();
         txtFirstName.clear();
         txtLastName.clear();
         txtMobileNumber.clear();
@@ -305,21 +281,12 @@ public class Signup {
     private void handleBackToLogin() {
         try {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/hms/fxml/login.fxml")));
-
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Login");
-
-            InputStream iconStream = getClass().getResourceAsStream("/com/hms/images/HMS.png");
-            if (iconStream != null) {
-                stage.getIcons().add(new Image(iconStream));
-            } else {
-                System.err.println("⚠️ HMS.png icon not found at /com/hms/images/HMS.png");
-            }
-
+            InputStream icon = getClass().getResourceAsStream("/com/hms/images/HMS.png");
+            if (icon != null) stage.getIcons().add(new Image(icon));
             stage.show();
-
-            // Close current window
             ((Stage) linkBackToLogin.getScene().getWindow()).close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -331,13 +298,10 @@ public class Signup {
         txtVisiblePassword.setText(txtPassword.getText());
         txtPassword.setVisible(false);
         txtPassword.setManaged(false);
-
         txtVisiblePassword.setVisible(true);
         txtVisiblePassword.setManaged(true);
-
         showPasswordIcon.setVisible(false);
         showPasswordIcon.setManaged(false);
-
         hidePasswordIcon.setVisible(true);
         hidePasswordIcon.setManaged(true);
     }
@@ -347,13 +311,10 @@ public class Signup {
         txtPassword.setText(txtVisiblePassword.getText());
         txtVisiblePassword.setVisible(false);
         txtVisiblePassword.setManaged(false);
-
         txtPassword.setVisible(true);
         txtPassword.setManaged(true);
-
         hidePasswordIcon.setVisible(false);
         hidePasswordIcon.setManaged(false);
-
         showPasswordIcon.setVisible(true);
         showPasswordIcon.setManaged(true);
     }
@@ -363,13 +324,10 @@ public class Signup {
         txtVisibleComPassword.setText(txtComPassword.getText());
         txtComPassword.setVisible(false);
         txtComPassword.setManaged(false);
-
         txtVisibleComPassword.setVisible(true);
         txtVisibleComPassword.setManaged(true);
-
         showComPasswordIcon.setVisible(false);
         showComPasswordIcon.setManaged(false);
-
         hideComPasswordIcon.setVisible(true);
         hideComPasswordIcon.setManaged(true);
     }
@@ -379,22 +337,19 @@ public class Signup {
         txtComPassword.setText(txtVisibleComPassword.getText());
         txtVisibleComPassword.setVisible(false);
         txtVisibleComPassword.setManaged(false);
-
         txtComPassword.setVisible(true);
         txtComPassword.setManaged(true);
-
         hideComPasswordIcon.setVisible(false);
         hideComPasswordIcon.setManaged(false);
-
         showComPasswordIcon.setVisible(true);
         showComPasswordIcon.setManaged(true);
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 }

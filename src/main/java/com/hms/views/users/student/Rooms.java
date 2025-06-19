@@ -1,158 +1,104 @@
 package com.hms.views.users.student;
 
 import com.hms.utils.DB;
-import javafx.animation.Timeline;
+import com.hms.views.auth.Session;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.util.Duration;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.TableCell;
+import javafx.util.Duration;
+
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Rooms implements Initializable {
 
-    @FXML
-    private Label txtavailable;
+    /* ─────────────── UI ─────────────── */
+    @FXML private Label txtavailable, txtfilled, selectedHostelLabel;
 
-    @FXML
-    private Label txtfilled;
+    /* Hostel table */
+    @FXML private TableView<Hostel> hostel_table;
+    @FXML private TableColumn<Hostel,String> hostelIdColumn, hostelNameColumn, hostelLocationColumn,
+            totalRoomsColumn, availableRoomsColumn, hostelTypeColumn,
+            contactPersonColumn, contactNumberColumn, emailColumn, descriptionColumn;
 
-    @FXML
-    private Label selectedHostelLabel;
+    /* Room table */
+    @FXML private TableView<Room> room_table;
+    @FXML private TableColumn<Room,String> roomIdColumn, roomTypeColumn, capacityColumn,
+            currentOccupantsColumn, facilityColumn, roomStatusColumn, monthlyRentColumn;
+    @FXML private TableColumn<Room,Void> applyActionColumn;
 
-    // Hostel Table
-    @FXML
-    private TableView<Hostel> hostel_table;
-
-    // Assuming these are defined in your FXML file
-    @FXML private TableColumn<Hostel, String> hostelIdColumn;
-    @FXML private TableColumn<Hostel, String> hostelNameColumn;
-    @FXML private TableColumn<Hostel, String> hostelLocationColumn;
-    @FXML private TableColumn<Hostel, String> totalRoomsColumn; // Renamed from hostelCapacityColumn
-    @FXML private TableColumn<Hostel, String> availableRoomsColumn; // Renamed from hostelAvailableColumn
-    @FXML private TableColumn<Hostel, String> hostelTypeColumn;
-    @FXML private TableColumn<Hostel, String> contactPersonColumn; // New
-    @FXML private TableColumn<Hostel, String> contactNumberColumn; // New
-    @FXML private TableColumn<Hostel, String> emailColumn;         // New
-    @FXML private TableColumn<Hostel, String> descriptionColumn;   // New
-
-    // Room Table
-    @FXML
-    private TableView<Room> room_table;
-
-    @FXML
-    private TableColumn<Room, String> roomIdColumn;
-
-    @FXML
-    private TableColumn<Room, String> roomTypeColumn;
-
-    @FXML
-    private TableColumn<Room, String> capacityColumn;
-
-    @FXML
-    private TableColumn<Room, String> currentOccupantsColumn;
-
-    @FXML
-    private TableColumn<Room, String> facilityColumn;
-
-    @FXML
-    private TableColumn<Room, String> roomStatusColumn;
-
-    @FXML
-    private TableColumn<Room, String> monthlyRentColumn;
-
-    @FXML
-    private TableColumn<Room, Void> applyActionColumn;
-
-    private Connection conn = null;
-    private ResultSet rs = null;
-    private PreparedStatement pst = null;
+    /* DB */
+    private Connection conn;
     private Timeline timeline;
 
+    /* ───────────── INIT ───────────── */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            conn = DB.connect();
-            setupHostelTableColumns();
-            setupRoomTableColumns();
-            loadHostels();
+        conn = DB.connect();
 
-            hostel_table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-                if (newSelection != null) {
-                    selectedHostelLabel.setText("Selected Hostel: " + newSelection.getHostelName());
-                    loadRoomsForHostel(newSelection.getHostelId());
-                    updateStatistics();
-                }
-            });
+        setupHostelTableColumns();
+        setupRoomTableColumns();
+        loadHostels();
 
-            room_table.setItems(FXCollections.observableArrayList());
-            selectedHostelLabel.setText("Select a hostel to view rooms");
-            startTimeUpdates();
-        } catch (Exception e) {
-            e.printStackTrace(); // Or showAlert(...) if needed
-        }
+        hostel_table.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) {
+                selectedHostelLabel.setText("Selected Hostel: " + newSel.getHostelName());
+                loadRoomsForHostel(newSel.getHostelId());
+                updateStatistics();
+            }
+        });
 
+        selectedHostelLabel.setText("Select a hostel to view rooms");
+        room_table.setItems(FXCollections.observableArrayList());
+
+        startClock();
     }
 
-    /**
-     * Sets up the cell value factories for the hostel TableView columns.
-     * This method binds the columns to the properties of the updated Hostel class.
-     */
+    /* ───────── Table setups ───────── */
     private void setupHostelTableColumns() {
-        // Updated bindings for existing columns
-        hostelIdColumn.setCellValueFactory(cellData -> cellData.getValue().hostelIdProperty());
-        hostelNameColumn.setCellValueFactory(cellData -> cellData.getValue().hostelNameProperty());
-        hostelLocationColumn.setCellValueFactory(cellData -> cellData.getValue().locationProperty());
-        hostelTypeColumn.setCellValueFactory(cellData -> cellData.getValue().hostelTypeProperty());
-
-
-        totalRoomsColumn.setCellValueFactory(cellData -> cellData.getValue().totalRoomsProperty());
-        availableRoomsColumn.setCellValueFactory(cellData -> cellData.getValue().availableRoomsProperty());
-
-        contactPersonColumn.setCellValueFactory(cellData -> cellData.getValue().contactPersonProperty());
-        contactNumberColumn.setCellValueFactory(cellData -> cellData.getValue().contactNumberProperty());
-        emailColumn.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
-        descriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+        hostelIdColumn      .setCellValueFactory(c -> c.getValue().hostelIdProperty());
+        hostelNameColumn    .setCellValueFactory(c -> c.getValue().hostelNameProperty());
+        hostelLocationColumn.setCellValueFactory(c -> c.getValue().locationProperty());
+        totalRoomsColumn    .setCellValueFactory(c -> c.getValue().totalRoomsProperty());
+        availableRoomsColumn.setCellValueFactory(c -> c.getValue().availableRoomsProperty());
+        hostelTypeColumn    .setCellValueFactory(c -> c.getValue().hostelTypeProperty());
+        contactPersonColumn .setCellValueFactory(c -> c.getValue().contactPersonProperty());
+        contactNumberColumn .setCellValueFactory(c -> c.getValue().contactNumberProperty());
+        emailColumn         .setCellValueFactory(c -> c.getValue().emailProperty());
+        descriptionColumn   .setCellValueFactory(c -> c.getValue().descriptionProperty());
     }
 
     private void setupRoomTableColumns() {
-        roomIdColumn.setCellValueFactory(cellData -> cellData.getValue().roomIdProperty());
-        roomTypeColumn.setCellValueFactory(cellData -> cellData.getValue().roomTypeProperty());
-        capacityColumn.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());
-        currentOccupantsColumn.setCellValueFactory(cellData -> cellData.getValue().currentOccupantsProperty());
-        facilityColumn.setCellValueFactory(cellData -> cellData.getValue().facilityProperty());
-        roomStatusColumn.setCellValueFactory(cellData -> cellData.getValue().roomStatusProperty());
-        monthlyRentColumn.setCellValueFactory(cellData -> cellData.getValue().monthlyRentProperty());
+        roomIdColumn          .setCellValueFactory(c -> c.getValue().roomIdProperty());
+        roomTypeColumn        .setCellValueFactory(c -> c.getValue().roomTypeProperty());
+        capacityColumn        .setCellValueFactory(c -> c.getValue().capacityProperty());
+        currentOccupantsColumn.setCellValueFactory(c -> c.getValue().currentOccupantsProperty());
+        facilityColumn        .setCellValueFactory(c -> c.getValue().facilityProperty());
+        roomStatusColumn      .setCellValueFactory(c -> c.getValue().roomStatusProperty());
+        monthlyRentColumn     .setCellValueFactory(c -> c.getValue().monthlyRentProperty());
 
-        // Setup the "Apply" button column
-        applyActionColumn.setCellFactory(param -> new TableCell<Room, Void>() {
-            private final Button applyButton = new Button("Apply");
+        /* Apply‑button column */
+        applyActionColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button btn = new Button("Apply");
 
             {
-                applyButton.getStyleClass().add("apply-button");
-                applyButton.setOnAction(_ -> {
-                    Room room = getTableView().getItems().get(getIndex());
-                    Hostel selectedHostel = hostel_table.getSelectionModel().getSelectedItem();
-                    if (selectedHostel != null) {
-                        handleRoomApplication(room, selectedHostel);
-                    }
+                btn.getStyleClass().add("apply-button");
+                btn.setOnAction(e -> {
+                    Room   room   = getTableView().getItems().get(getIndex());
+                    Hostel hostel = hostel_table.getSelectionModel().getSelectedItem();
+                    if (hostel != null) handleRoomApplication(room, hostel);
                 });
             }
 
@@ -164,361 +110,297 @@ public class Rooms implements Initializable {
                 } else {
                     Room room = getTableView().getItems().get(getIndex());
                     boolean canApply = canApplyForRoom(room);
-                    applyButton.setDisable(!canApply);
 
-                    if (canApply) {
-                        applyButton.setText("Apply");
-                        applyButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-                    } else {
-                        if ("Full".equalsIgnoreCase(room.getRoomStatus())) {
-                            applyButton.setText("Room Full");
-                        } else {
-                            applyButton.setText("Not Available");
-                        }
-                        applyButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
-                    }
-                    setGraphic(applyButton);
+                    btn.setDisable(!canApply);
+                    btn.setText(
+                            canApply ? "Apply"
+                                     : ("Full".equalsIgnoreCase(room.getRoomStatus()) ? "Room Full"
+                                                                                       : "Not Available"));
+                    btn.setStyle(canApply
+                            ? "-fx-background-color:#4CAF50;-fx-text-fill:white;"
+                            : "-fx-background-color:#f44336;-fx-text-fill:white;");
+                    setGraphic(btn);
                 }
             }
         });
     }
 
-    private boolean canApplyForRoom(Room room) {
+    /* ───────── Load hostels ───────── */
+    private void loadHostels() {
+        ObservableList<Hostel> list = FXCollections.observableArrayList();
+        String sql = """
+                SELECT h.Hostel_ID, h.Hostel_Name, h.Location, h.Hostel_Type,
+                       h.Contact_Person, h.Contact_Number, h.Email, h.Description,
+                       COALESCE(rc.total_rooms,0)     AS Total_Rooms,
+                       COALESCE(rc.available_rooms,0) AS Available_Rooms
+                FROM hostels h
+                LEFT JOIN (
+                    SELECT Hostel_ID,
+                           COUNT(Room_id)               AS total_rooms,
+                           SUM(CASE WHEN Capacity > COALESCE(Current_Occupants,0) THEN 1 ELSE 0 END)
+                                                          AS available_rooms
+                    FROM rooms
+                    GROUP BY Hostel_ID
+                ) rc ON h.Hostel_ID = rc.Hostel_ID
+                ORDER BY h.Hostel_Name
+                """;
+
+        try (PreparedStatement p = conn.prepareStatement(sql);
+             ResultSet r = p.executeQuery()) {
+
+            while (r.next()) {
+                list.add(new Hostel(
+                        r.getString("Hostel_ID"),
+                        r.getString("Hostel_Name"),
+                        r.getString("Location"),
+                        r.getString("Total_Rooms"),
+                        r.getString("Available_Rooms"),
+                        r.getString("Hostel_Type"),
+                        r.getString("Contact_Person"),
+                        r.getString("Contact_Number"),
+                        r.getString("Email"),
+                        r.getString("Description")
+                ));
+            }
+            hostel_table.setItems(list);
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "DB Error", "Error loading hostels:\n" + e.getMessage());
+        }
+    }
+
+    /* ───────── Load rooms ───────── */
+    private void loadRoomsForHostel(String hostelId) {
+        ObservableList<Room> list = FXCollections.observableArrayList();
+        String sql = """
+                SELECT Room_id, Room_type, Capacity,
+                       COALESCE(Current_Occupants,0) AS Current_Occupants,
+                       Facility, Monthly_Rent,
+                       CASE
+                           WHEN COALESCE(Current_Occupants,0) >= Capacity THEN 'Full'
+                           WHEN Room_status='Available' AND COALESCE(Current_Occupants,0) < Capacity THEN 'Available'
+                           ELSE 'Not Available'
+                       END AS Room_status
+                FROM rooms
+                WHERE Hostel_ID = ?
+                ORDER BY Room_id
+                """;
+
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, hostelId);
+            try (ResultSet r = p.executeQuery()) {
+                while (r.next()) {
+                    list.add(new Room(
+                            r.getString("Room_id"),
+                            r.getString("Room_type"),
+                            r.getString("Capacity"),
+                            r.getString("Current_Occupants"),
+                            r.getString("Facility"),
+                            r.getString("Room_status"),
+                            r.getString("Monthly_Rent")
+                    ));
+                }
+            }
+            room_table.setItems(list);
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "DB Error", "Error loading rooms:\n" + e.getMessage());
+        }
+    }
+
+    /* ───────── Statistics ───────── */
+    private void updateStatistics() {
+        Hostel h = hostel_table.getSelectionModel().getSelectedItem();
+        if (h == null) return;
+
+        String availSql  = "SELECT COUNT(*) FROM rooms WHERE Hostel_ID=? AND Capacity > COALESCE(Current_Occupants,0) AND Room_status='Available'";
+        String filledSql = "SELECT COUNT(*) FROM rooms WHERE Hostel_ID=? AND Capacity <= COALESCE(Current_Occupants,0)";
+
+        try (PreparedStatement pa = conn.prepareStatement(availSql);
+             PreparedStatement pf = conn.prepareStatement(filledSql)) {
+
+            pa.setString(1, h.getHostelId());
+            pf.setString(1, h.getHostelId());
+
+            int available = 0, filled = 0;
+
+            try (ResultSet ra = pa.executeQuery()) {
+                if (ra.next()) available = ra.getInt(1);
+            }
+            try (ResultSet rf = pf.executeQuery()) {
+                if (rf.next()) filled = rf.getInt(1);
+            }
+
+            txtavailable.setText(String.valueOf(available));
+            txtfilled.setText(String.valueOf(filled));
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "DB Error", "Error updating stats:\n" + e.getMessage());
+        }
+    }
+
+    /* ───────── Room application helpers ───────── */
+    private boolean canApplyForRoom(Room r) {
         try {
-            int capacity = Integer.parseInt(room.getCapacity());
-            int occupants = Integer.parseInt(room.getCurrentOccupants());
-            return occupants < capacity && "Available".equalsIgnoreCase(room.getRoomStatus());
-        } catch (NumberFormatException e) {
+            return Integer.parseInt(r.getCurrentOccupants()) < Integer.parseInt(r.getCapacity())
+                    && "Available".equalsIgnoreCase(r.getRoomStatus());
+        } catch (NumberFormatException ex) {
             return false;
         }
     }
 
     private void handleRoomApplication(Room room, Hostel hostel) {
-        // Here you can implement the actual application logic
-        // For now, just show a confirmation dialog
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Room Application");
-        alert.setHeaderText("Apply for Room");
-        alert.setContentText(String.format(
-                """     
-                        Do you want to apply for:
-                        Hostel: %s
-                        Room ID: %s
-                        Room Type: %s
-                        Monthly Rent: ₹%s
-                        Available Spots: %d""",
-                hostel.getHostelName(),
-                room.getRoomId(),
-                room.getRoomType(),
-                room.getMonthlyRent(),
-                Integer.parseInt(room.getCapacity()) - Integer.parseInt(room.getCurrentOccupants())
-        ));
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Apply for Room?", ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText(String.format(
+                "Apply for %s (Room %s)", hostel.getHostelName(), room.getRoomId()));
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response.getButtonData().isDefaultButton()) {
-                // Implement actual application submission here
-                showAlert(Alert.AlertType.INFORMATION, "Application Submitted",
-                        "Your application for Room " + room.getRoomId() + " has been submitted successfully!");
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            final int studentId = Session.getLoggedInStudentId();  // Make sure this method works
+            
+            
+            if (studentId <= 0) {
+                showAlert(Alert.AlertType.ERROR, "Login Required",
+                          "Invalid or missing student ID. Please log in again.");
+                return;   // stop – don’t insert anything
             }
-        });
-    }
-
-    private void loadHostels() {
-        // The list now holds Hostel objects which should be updated to accept the new fields.
-        ObservableList<Hostel> hostelList = FXCollections.observableArrayList();
-        try {
-            // Updated SQL query to include the new columns and calculations.
-            String sql = """
-            SELECT
-                h.Hostel_ID,
-                h.Hostel_Name,
-                h.Location,
-                h.Hostel_Type,
-                h.Contact_Person,
-                h.Contact_Number,
-                h.Email,
-                h.Description,
-                COALESCE(r_counts.total_rooms, 0) AS Total_Rooms,
-                COALESCE(r_counts.available_rooms, 0) AS Available_Rooms
-            FROM
-                hostels h
-            LEFT JOIN (
-                SELECT
-                    Hostel_Name,
-                    COUNT(Room_id) AS total_rooms,
-                    SUM(CASE WHEN Capacity > COALESCE(Current_Occupants, 0) THEN 1 ELSE 0 END) AS available_rooms
-                FROM
-                    rooms
-                GROUP BY
-                    Hostel_Name
-            ) r_counts ON h.Hostel_Name = r_counts.Hostel_Name
-            ORDER BY
-                h.Hostel_Name;
+            
+            // 1. Check if already applied for this room with pending status
+            String checkSql = """
+                SELECT COUNT(*) FROM hostel_requests
+                WHERE student_id = ? AND hostel_id = ? AND room_id = ? AND status = 'Pending'
             """;
 
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setInt(1, studentId);
+                checkStmt.setInt(2, Integer.parseInt(hostel.getHostelId()));
+                checkStmt.setInt(3, Integer.parseInt(room.getRoomId()));
 
-            while (rs.next()) {
-                // Make sure your Hostel class constructor is updated to match these parameters.
-                Hostel hostel = new Hostel(
-                        rs.getString("Hostel_ID"),
-                        rs.getString("Hostel_Name"),
-                        rs.getString("Location"),
-                        rs.getString("Total_Rooms"),
-                        rs.getString("Available_Rooms"),
-                        rs.getString("Hostel_Type"),
-                        rs.getString("Contact_Person"),
-                        rs.getString("Contact_Number"),
-                        rs.getString("Email"),
-                        rs.getString("Description")
-                );
-                hostelList.add(hostel);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    showAlert(Alert.AlertType.WARNING, "Already Applied",
+                            "You have already applied for this room and it's still pending.");
+                    return;
+                }
+            } catch (SQLException ex) {
+                showAlert(Alert.AlertType.ERROR, "DB Error",
+                        "Could not verify existing application:\n" + ex.getMessage());
+                return;
             }
 
-            hostel_table.setItems(hostelList);
+            String insertSql = """
+            	    INSERT INTO hostel_requests
+            	           (student_id, hostel_id, room_id,
+            	            room_type_preference, facility_preference,
+            	            request_date, status)
+            	    VALUES (?, ?, ?, ?, ?, CURRENT_DATE, 'Pending')
+            	""";
 
+            	try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+            	    ps.setInt   (1, studentId);
+            	    ps.setInt   (2, Integer.parseInt(hostel.getHostelId()));
+            	    ps.setInt   (3, Integer.parseInt(room.getRoomId()));
+            	    ps.setString(4, room.getRoomType());   // << new
+            	    ps.setString(5, room.getFacility());   // << new
+            	    ps.executeUpdate();
 
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error loading hostels: " + e.getMessage());
-        } finally {
-            closeResources(rs, pst);
+            	    showAlert(Alert.AlertType.INFORMATION,
+            	              "Application Submitted",
+            	              "Your request is now Pending.");
+            	} catch (SQLException ex) {
+            	    showAlert(Alert.AlertType.ERROR,
+            	              "DB Error", ex.getMessage());
+            	}
         }
 
     }
 
 
-
-    private void loadRoomsForHostel(String hostelId) {
-        ObservableList<Room> roomList = FXCollections.observableArrayList();
-        try {
-            String sql = """
-            SELECT r.Room_id, r.Room_type, r.Capacity,
-                   COALESCE(r.Current_Occupants, 0) AS Current_Occupants,
-                   r.Facility, r.Monthly_Rent,
-                   CASE
-                       WHEN COALESCE(r.Current_Occupants, 0) >= r.Capacity THEN 'Full'
-                       WHEN r.Room_status = 'Available' AND COALESCE(r.Current_Occupants, 0) < r.Capacity THEN 'Available'
-                       ELSE 'Not Available'
-                   END AS Room_status
-            FROM rooms r
-            JOIN hostels h ON r.Hostel_ID = h.Hostel_ID
-            WHERE h.Hostel_ID = ?
-            ORDER BY r.Room_id
-        """;
-
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, hostelId);
-            rs = pst.executeQuery();
-
-            while (rs.next()) {
-                Room room = new Room(
-                        rs.getString("Room_id"),
-                        rs.getString("Room_type"),
-                        rs.getString("Capacity"),
-                        rs.getString("Current_Occupants"),
-                        rs.getString("Facility"),
-                        rs.getString("Room_status"),
-                        rs.getString("Monthly_Rent")
-                );
-                roomList.add(room);
-            }
-
-            room_table.setItems(roomList);
-
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error loading rooms: " + e.getMessage());
-        } finally {
-            closeResources(rs, pst);
-        }
-    }
-
-
-    private void updateStatistics() {
-        Hostel selectedHostel = hostel_table.getSelectionModel().getSelectedItem();
-        if (selectedHostel == null) return;
-
-        try {
-            // Count available rooms
-            String availableSql = """
-                SELECT COUNT(*) as available_count
-                FROM rooms r
-                JOIN hostels h ON r.Hostel_Name = h.Hostel_Name
-                WHERE h.Hostel_id = ? AND COALESCE(r.Current_Occupants, 0) < r.Capacity AND r.Room_status = 'Available'
-                """;
-
-            pst = conn.prepareStatement(availableSql);
-            pst.setString(1, selectedHostel.getHostelId());
-            rs = pst.executeQuery();
-
-            int availableCount = 0;
-            if (rs.next()) {
-                availableCount = rs.getInt("available_count");
-            }
-
-            closeResources(rs, pst);
-
-            // Count filled rooms
-            String filledSql = """
-                SELECT COUNT(*) as filled_count
-                FROM rooms r
-                JOIN hostels h ON r.Hostel_Name = h.Hostel_Name
-                WHERE h.Hostel_id = ? AND COALESCE(r.Current_Occupants, 0) >= r.Capacity
-                """;
-
-            pst = conn.prepareStatement(filledSql);
-            pst.setString(1, selectedHostel.getHostelId());
-            rs = pst.executeQuery();
-
-            int filledCount = 0;
-            if (rs.next()) {
-                filledCount = rs.getInt("filled_count");
-            }
-
-            txtavailable.setText(String.valueOf(availableCount));
-            txtfilled.setText(String.valueOf(filledCount));
-
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error updating statistics: " + e.getMessage());
-        } finally {
-            closeResources(rs, pst);
-        }
-    }
-
-    public void startTimeUpdates() {
-        timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), _ -> {
-                    Date d = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
-                    // If you have a time label, update it here
-                })
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE);
+    /* ───────── Clock (optional) ───────── */
+    private void startClock() {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1)));
+        timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
-    private void closeResources(ResultSet rs, PreparedStatement pst) {
-        try {
-            if (rs != null) rs.close();
-            if (pst != null) pst.close();
-        } catch (SQLException e) {
-            System.err.println("Error closing resources: " + e.getMessage());
-        }
+    /* ───────── Utility ───────── */
+    private void showAlert(Alert.AlertType type, String title, String msg) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    public void cleanup() {
-        if (timeline != null) {
-            timeline.stop();
-        }
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error closing connection: " + e.getMessage());
-        }
-    }
-
-    // --- Hostel Model Class ---
+    /* ───────── Model classes ───────── */
     public static class Hostel {
-        private final StringProperty hostelId;
-        private final StringProperty hostelName;
-        private final StringProperty location;
-        private final StringProperty totalRooms;      // Renamed from hostelCapacity
-        private final StringProperty availableRooms;  // Renamed from hostelAvailable
-        private final StringProperty hostelType;
-        private final StringProperty contactPerson;   // New field
-        private final StringProperty contactNumber;   // New field
-        private final StringProperty email;           // New field
-        private final StringProperty description;     // New field
+        private final StringProperty hostelId, hostelName, location,
+                totalRooms, availableRooms, hostelType,
+                contactPerson, contactNumber, email, description;
 
-        // Updated constructor to accept all the new fields
-        public Hostel(String hostelId, String hostelName, String location, String totalRooms,
-                      String availableRooms, String hostelType, String contactPerson,
-                      String contactNumber, String email, String description) {
-            this.hostelId = new SimpleStringProperty(hostelId);
-            this.hostelName = new SimpleStringProperty(hostelName);
-            this.location = new SimpleStringProperty(location);
-            this.totalRooms = new SimpleStringProperty(totalRooms);
-            this.availableRooms = new SimpleStringProperty(availableRooms);
-            this.hostelType = new SimpleStringProperty(hostelType);
-            this.contactPerson = new SimpleStringProperty(contactPerson);
-            this.contactNumber = new SimpleStringProperty(contactNumber);
-            this.email = new SimpleStringProperty(email);
-            this.description = new SimpleStringProperty(description);
+        public Hostel(String id, String name, String loc, String total,
+                      String avail, String type, String person,
+                      String number, String email, String desc) {
+            this.hostelId       = new SimpleStringProperty(id);
+            this.hostelName     = new SimpleStringProperty(name);
+            this.location       = new SimpleStringProperty(loc);
+            this.totalRooms     = new SimpleStringProperty(total);
+            this.availableRooms = new SimpleStringProperty(avail);
+            this.hostelType     = new SimpleStringProperty(type);
+            this.contactPerson  = new SimpleStringProperty(person);
+            this.contactNumber  = new SimpleStringProperty(number);
+            this.email          = new SimpleStringProperty(email);
+            this.description    = new SimpleStringProperty(desc);
         }
 
-        // --- Property Getters ---
-        public StringProperty hostelIdProperty() { return hostelId; }
-        public StringProperty hostelNameProperty() { return hostelName; }
-        public StringProperty locationProperty() { return location; }
-        public StringProperty totalRoomsProperty() { return totalRooms; }
+        /* properties */
+        public StringProperty hostelIdProperty()       { return hostelId; }
+        public StringProperty hostelNameProperty()     { return hostelName; }
+        public StringProperty locationProperty()       { return location; }
+        public StringProperty totalRoomsProperty()     { return totalRooms; }
         public StringProperty availableRoomsProperty() { return availableRooms; }
-        public StringProperty hostelTypeProperty() { return hostelType; }
-        public StringProperty contactPersonProperty() { return contactPerson; }
-        public StringProperty contactNumberProperty() { return contactNumber; }
-        public StringProperty emailProperty() { return email; }
-        public StringProperty descriptionProperty() { return description; }
+        public StringProperty hostelTypeProperty()     { return hostelType; }
+        public StringProperty contactPersonProperty()  { return contactPerson; }
+        public StringProperty contactNumberProperty()  { return contactNumber; }
+        public StringProperty emailProperty()          { return email; }
+        public StringProperty descriptionProperty()    { return description; }
 
-
-        // --- Regular Getters ---
-        public String getHostelId() { return hostelId.get(); }
+        /* getters */
+        public String getHostelId()   { return hostelId.get(); }
         public String getHostelName() { return hostelName.get(); }
-        public String getLocation() { return location.get(); }
-        public String getTotalRooms() { return totalRooms.get(); }
-        public String getAvailableRooms() { return availableRooms.get(); }
-        public String getHostelType() { return hostelType.get(); }
-        public String getContactPerson() { return contactPerson.get(); }
-        public String getContactNumber() { return contactNumber.get(); }
-        public String getEmail() { return email.get(); }
-        public String getDescription() { return description.get(); }
     }
 
-    // --- Room Model Class ---
-    static class Room {
-        private final StringProperty roomId;
-        private final StringProperty roomType;
-        private final StringProperty capacity;
-        private final StringProperty currentOccupants;
-        private final StringProperty facility;
-        private final StringProperty roomStatus;
-        private final StringProperty monthlyRent;
+    public static class Room {
+        private final StringProperty roomId, roomType, capacity, currentOccupants,
+                facility, roomStatus, monthlyRent;
 
-        public Room(String roomId, String roomType, String capacity, String currentOccupants,
-                    String facility, String roomStatus, String monthlyRent) {
-            this.roomId = new SimpleStringProperty(roomId);
-            this.roomType = new SimpleStringProperty(roomType);
-            this.capacity = new SimpleStringProperty(capacity);
-            this.currentOccupants = new SimpleStringProperty(currentOccupants);
-            this.facility = new SimpleStringProperty(facility);
-            this.roomStatus = new SimpleStringProperty(roomStatus);
-            this.monthlyRent = new SimpleStringProperty(monthlyRent);
+        public Room(String id, String type, String cap, String occ,
+                    String fac, String status, String rent) {
+            this.roomId           = new SimpleStringProperty(id);
+            this.roomType         = new SimpleStringProperty(type);
+            this.capacity         = new SimpleStringProperty(cap);
+            this.currentOccupants = new SimpleStringProperty(occ);
+            this.facility         = new SimpleStringProperty(fac);
+            this.roomStatus       = new SimpleStringProperty(status);
+            this.monthlyRent      = new SimpleStringProperty(rent);
         }
 
-        // Property getters
-        public StringProperty roomIdProperty() { return roomId; }
-        public StringProperty roomTypeProperty() { return roomType; }
-        public StringProperty capacityProperty() { return capacity; }
+        /* properties */
+        public StringProperty roomIdProperty()           { return roomId; }
+        public StringProperty roomTypeProperty()         { return roomType; }
+        public StringProperty capacityProperty()         { return capacity; }
         public StringProperty currentOccupantsProperty() { return currentOccupants; }
-        public StringProperty facilityProperty() { return facility; }
-        public StringProperty roomStatusProperty() { return roomStatus; }
-        public StringProperty monthlyRentProperty() { return monthlyRent; }
+        public StringProperty facilityProperty()         { return facility; }
+        public StringProperty roomStatusProperty()       { return roomStatus; }
+        public StringProperty monthlyRentProperty()      { return monthlyRent; }
 
-        // Regular getters
-        public String getRoomId() { return roomId.get(); }
-        public String getRoomType() { return roomType.get(); }
-        public String getCapacity() { return capacity.get(); }
+        /* getters (used in controller) */
+        public String getRoomId()           { return roomId.get(); }
+        public String getRoomType()         { return roomType.get(); }
+        public String getCapacity()         { return capacity.get(); }
         public String getCurrentOccupants() { return currentOccupants.get(); }
-        public String getFacility() { return facility.get(); }
-        public String getRoomStatus() { return roomStatus.get(); }
-        public String getMonthlyRent() { return monthlyRent.get(); }
+        public String getFacility()         { return facility.get(); }
+        public String getRoomStatus()       { return roomStatus.get(); }
+        public String getMonthlyRent()      { return monthlyRent.get(); }
     }
 }

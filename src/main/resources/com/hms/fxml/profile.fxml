@@ -1,60 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.Profile">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hms.views.Profile">
     <children>
-        <Pane prefHeight="390" prefWidth="500" style="-fx-background-color: #fbfbfb;">
+        <Pane prefHeight="650" prefWidth="500" style="-fx-background-color: #fbfbfb;">
             <children>
+
                 <!-- User Image -->
                 <ImageView fitHeight="80" fitWidth="80" layoutX="40" layoutY="20">
                     <image>
-                        <Image url="@../../hms/images/user_img.png" />
+                        <Image url="@../../hms/images/user_img.png"/>
                     </image>
                 </ImageView>
 
-                <!-- Welcome Label -->
-                <Text layoutX="140" layoutY="60" style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 24;">
+                <!-- Welcome -->
+                <Text layoutX="140" layoutY="60"
+                      style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 24;">
                     <text>Welcome,</text>
                 </Text>
 
-                <!-- Username Label -->
-                <Text fx:id="username" layoutX="140" layoutY="90" style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 18; -fx-fill: #00a650;">
+                <!-- Username headline -->
+                <Text fx:id="username" layoutX="140" layoutY="90"
+                      style="-fx-font-family: Tahoma; -fx-font-weight: bold; -fx-font-size: 18; -fx-fill: #00a650;">
                     <text>User</text>
                 </Text>
 
-                <!-- Separator Line -->
-                <Line endX="500" layoutY="120" startX="0" stroke="#cccccc" strokeWidth="1" />
+                <!-- Separator -->
+                <Line startX="0" endX="500" layoutY="120" stroke="#cccccc" strokeWidth="1"/>
 
-                <!-- Form Fields -->
-                <Text layoutX="70" layoutY="180" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                <!-- User‑table fields -->
+                <Text layoutX="70" layoutY="180"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
                     <text>User ID:</text>
                 </Text>
-                <TextField fx:id="txtuserid" layoutX="140" layoutY="150" prefHeight="30" prefWidth="290" promptText="User ID" editable="false" />
+                <TextField fx:id="txtuserid" layoutX="140" layoutY="150"
+                           prefWidth="290" prefHeight="30" promptText="User ID" editable="false"/>
 
-                <Text layoutX="50" layoutY="220" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                <Text layoutX="50" layoutY="220"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
                     <text>Username:</text>
                 </Text>
-                <TextField fx:id="txtusername" layoutX="140" layoutY="190" prefHeight="30" prefWidth="290" promptText="Username" />
+                <TextField fx:id="txtusername" layoutX="140" layoutY="190"
+                           prefWidth="290" prefHeight="30" promptText="Username"/>
 
-                <Text layoutX="60" layoutY="260" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
-                    <text>Password:</text>
-                </Text>
-                <TextField fx:id="txtpassword" layoutX="140" layoutY="230" prefHeight="30" prefWidth="290" promptText="Password" />
+                
+                
 
-                <Text layoutX="60" layoutY="300" style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                <Text layoutX="60" layoutY="300"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
                     <text>User type:</text>
                 </Text>
-                <TextField fx:id="txtusertype" layoutX="140" layoutY="270" prefHeight="30" prefWidth="290" promptText="User Type" editable="false" />
+                <TextField fx:id="txtusertype" layoutX="140" layoutY="270"
+                           prefWidth="290" prefHeight="30" promptText="User Type" editable="false"/>
 
-                <!-- Buttons -->
-                <Button fx:id="update_btn" layoutX="220" layoutY="330" mnemonicParsing="false" onAction="#update_btnActionPerformed" prefHeight="38" prefWidth="99" text="Update" />
-                <Button fx:id="clear_btn" layoutX="330" layoutY="330" mnemonicParsing="false" onAction="#clear_btnActionPerformed" prefHeight="38" prefWidth="102" text="Clear" />
+                <!-- Student‑table fields -->
+                <Text layoutX="50" layoutY="340"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>First Name:</text>
+                </Text>
+                <TextField fx:id="txtFirstName" layoutX="140" layoutY="310"
+                           prefWidth="290" prefHeight="30" promptText="First Name" editable="false"/>
+
+                <Text layoutX="50" layoutY="380"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Last Name:</text>
+                </Text>
+                <TextField fx:id="txtLastName" layoutX="140" layoutY="350"
+                           prefWidth="290" prefHeight="30" promptText="Last Name" editable="false"/>
+
+                <Text layoutX="70" layoutY="420"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Email:</text>
+                </Text>
+                <TextField fx:id="txtEmail" layoutX="140" layoutY="390"
+                           prefWidth="290" prefHeight="30" promptText="Email" editable="false"/>
+
+                <Text layoutX="20" layoutY="460"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Mobile Number:</text>
+                </Text>
+                <TextField fx:id="txtMobile" layoutX="140" layoutY="430"
+                           prefWidth="290" prefHeight="30" promptText="Mobile Number" editable="false"/>
+
+                <Text layoutX="70" layoutY="500"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Gender:</text>
+                </Text>
+                <TextField fx:id="txtGender" layoutX="140" layoutY="470"
+                           prefWidth="290" prefHeight="30" promptText="Gender" editable="false"/>
+
+                <Text layoutX="20" layoutY="540"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Study Program:</text>
+                </Text>
+                <TextField fx:id="txtProgram" layoutX="140" layoutY="510"
+                           prefWidth="290" prefHeight="30" promptText="Study Program" editable="false"/>
+
+                <Text layoutX="60" layoutY="580"
+                      style="-fx-font-family: Tahoma; -fx-font-size: 15; -fx-fill: #202835;">
+                    <text>Room No:</text>
+                </Text>
+                <TextField fx:id="txtRoomNo" layoutX="140" layoutY="550"
+                           prefWidth="290" prefHeight="30" promptText="Room Number" editable="false"/>
+
+               
             </children>
         </Pane>
     </children>

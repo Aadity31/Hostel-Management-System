@@ -1,163 +1,110 @@
 package com.hms.views;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.*;
 import java.util.ResourceBundle;
 
 import com.hms.utils.DB;
-import com.hms.utils.Emp;
-import javafx.event.ActionEvent;
+import com.hms.views.auth.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 public class Profile implements Initializable {
 
-    private Connection conn = null;
-    private ResultSet rs = null;
-    private PreparedStatement pst = null;
+    /* ────── DB handles ────── */
+    private Connection conn;
 
-    @FXML
-    private TextField txtuserid;
-    @FXML
-    private TextField txtusername;
-    @FXML
-    private TextField txtpassword;
-    @FXML
-    private TextField txtusertype;
-    @FXML
-    private Button update_btn;
-    @FXML
-    private Button clear_btn;
-    @FXML
-    private Text username;
+    /* ────── FXML controls ────── */
+    @FXML private TextField txtuserid;
+    @FXML private TextField txtusername;
+    @FXML private TextField txtusertype;
+
+    @FXML private TextField txtFirstName;
+    @FXML private TextField txtLastName;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtMobile;
+    @FXML private TextField txtGender;
+    @FXML private TextField txtProgram;
+    @FXML private TextField txtRoomNo;
+
+    @FXML private Text        username;
+    @FXML private Button      update_btn;
+    @FXML private Button      clear_btn;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         conn = DB.connect();
-        txtuserid.setText(String.valueOf(Emp.UserId));
-        get_data();
-        txtusername.requestFocus();
-    }
 
-    private void get_data() {
-        String tmp = txtuserid.getText();
-        String sql = "select * from user where User_id=?";
-
-        try {
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, tmp);
-            rs = pst.executeQuery();
-
-            if (rs.next()) {
-                String add1 = rs.getString("User_id");
-                txtuserid.setText(add1);
-
-                String add2 = rs.getString("Username");
-                txtusername.setText(add2);
-                username.setText(add2);
-
-                String add3 = rs.getString("Password");
-                txtpassword.setText(add3);
-
-                String add4 = rs.getString("User_type");
-                txtusertype.setText(add4);
-            }
-        } catch (SQLException e) {
-            showAlert("Database Error", e.getMessage(), Alert.AlertType.ERROR);
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-            } catch (SQLException e) {
-                // Ignore
-            }
+        int sid = Session.getLoggedInStudentId();
+        if (sid <= 0) {
+            showAlert("Not logged in", "Please log in again.", Alert.AlertType.ERROR);
+            return;
         }
+
+        txtuserid.setEditable(false);
+        txtusername.setEditable(false);
+        txtusertype.setEditable(false);
+        txtFirstName.setEditable(false);
+        txtLastName.setEditable(false);
+        txtEmail.setEditable(false);
+        txtMobile.setEditable(false);
+        txtGender.setEditable(false);
+        txtProgram.setEditable(false);
+        txtRoomNo.setEditable(false);
+
+        txtusertype.setText("Student");
+        loadProfile(sid);
     }
 
-    @FXML
-    private void update_btnActionPerformed(ActionEvent evt) {
-        if (!(txtuserid.getText().isEmpty() || txtusername.getText().isEmpty() ||
-                txtpassword.getText().isEmpty() || txtusertype.getText().isEmpty())) {
+    private void loadProfile(int sid) {
+        String sql = """
+            SELECT student_id, username,
+                   first_name, last_name, email,
+                   mobile_number, gender, study_program,
+                   COALESCE(room_no,'') AS room_no
+            FROM   student
+            WHERE  student_id = ?
+        """;
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Update Account");
-            alert.setHeaderText("Are you sure you want to update?");
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setInt(1, sid);
+            try (ResultSet r = p.executeQuery()) {
+                if (r.next()) {
+                    txtuserid   .setText(r.getString("student_id"));
+                    txtusername .setText(r.getString("username"));
+                    username    .setText(r.getString("username"));
 
-            if (alert.showAndWait().get() == ButtonType.OK) {
-                try {
-                    String value1 = txtuserid.getText();
-                    String value2 = txtusername.getText();
-                    String value3 = txtpassword.getText();
-                    String value4 = txtusertype.getText();
-
-                    String sql = "update user set User_id=?, Username=?, Password=?, User_type=? where User_id=?";
-                    pst = conn.prepareStatement(sql);
-                    pst.setString(1, value1);
-                    pst.setString(2, value2);
-                    pst.setString(3, value3);
-                    pst.setString(4, value4);
-                    pst.setString(5, value1);
-                    pst.execute();
-
-                    showAlert("Success", "Account Updated", Alert.AlertType.INFORMATION);
-
-                    // Log the update
-                    Date currentDate = new Date();
-                    DateFormat df = DateFormat.getDateInstance();
-                    String dateString = df.format(currentDate);
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                    String timeString = sdf.format(currentDate);
-
-                    int value = Emp.UserId;
-                    String reg = "insert into logs (User_id, Date, Status) values (?,?,?)";
-                    pst = conn.prepareStatement(reg);
-                    pst.setInt(1, value);
-                    pst.setString(2, timeString + " / " + dateString);
-                    pst.setString(3, "User Account Updated");
-                    pst.execute();
-
-                } catch (SQLException e) {
-                    showAlert("Database Error", e.getMessage(), Alert.AlertType.ERROR);
-                } finally {
-                    try {
-                        if (pst != null) pst.close();
-                    } catch (SQLException e) {
-                        // Ignore
-                    }
+                    txtFirstName.setText(r.getString("first_name"));
+                    txtLastName .setText(r.getString("last_name"));
+                    txtEmail    .setText(r.getString("email"));
+                    txtMobile   .setText(r.getString("mobile_number"));
+                    txtGender   .setText(r.getString("gender"));
+                    txtProgram  .setText(r.getString("study_program"));
+                    txtRoomNo   .setText(r.getString("room_no"));
                 }
-                get_data();
             }
-        } else {
-            showAlert("Error", "One or more required fields are empty", Alert.AlertType.ERROR);
+        } catch (SQLException ex) {
+            showAlert("Database Error", ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML
-    private void clear_btnActionPerformed(ActionEvent evt) {
-        txtusername.clear();
-        txtpassword.clear();
-        txtusertype.clear();
+    private void update_btnActionPerformed() {
+        showAlert("Not allowed", "Profile is read-only.", Alert.AlertType.INFORMATION);
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    @FXML
+    private void clear_btnActionPerformed() {
+        showAlert("Not allowed", "Profile is read-only.", Alert.AlertType.INFORMATION);
     }
 
-
+    private void showAlert(String title, String msg, Alert.AlertType type) {
+        Alert a = new Alert(type);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
 }

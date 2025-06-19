@@ -1,61 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.admin.ManageStaff">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hms.views.users.admin.ManageStaff">
     <center>
         <VBox spacing="10.0" style="-fx-padding: 20;">
 
             <!-- Add Staff Section -->
             <TitledPane expanded="true" text="Add Staff">
                 <VBox spacing="15.0" style="-fx-padding: 20;">
-
-                    <!-- First Row - User ID and Username -->
                     <HBox spacing="20.0" alignment="CENTER_LEFT">
                         <VBox spacing="5.0">
-                            <Label text="User ID:" />
-                            <TextField fx:id="txtuserid" prefWidth="200.0" disable="true" promptText="Auto-generated" />
+                            <Label text="Staff ID:" />
+                            <TextField fx:id="txtuserid" prefWidth="150.0" disable="true" promptText="Auto-generated" />
                         </VBox>
 
                         <VBox spacing="5.0">
                             <Label text="Username:" />
-                            <TextField fx:id="txtusername" prefWidth="200.0" />
+                            <TextField fx:id="txtusername" prefWidth="150.0" />
                         </VBox>
 
                         <VBox spacing="5.0">
                             <Label text="Password:" />
-                            <TextField fx:id="txtpassword" prefWidth="200.0" />
-                        </VBox>
-
-                        <VBox spacing="5.0">
-                            <Label text="User Type:" />
-                            <ComboBox fx:id="txtusertype" prefWidth="200.0">
-
-                            </ComboBox>
+                            <TextField fx:id="txtpassword" prefWidth="150.0" />
                         </VBox>
                     </HBox>
 
-                    <!-- Buttons Row -->
                     <HBox spacing="10.0" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
-                        <Button fx:id="add_btn" text="Add Record" onAction="#addStaff" prefWidth="100.0" />
-                        <Button fx:id="update_btn" text="Update" onAction="#updateStaff" prefWidth="100.0" />
-                        <Button fx:id="delete_btn" text="Delete" onAction="#deleteStaff" prefWidth="100.0" />
-                        <Button fx:id="clear_btn" text="Clear" onAction="#clearFields" prefWidth="100.0" />
+                        <Button fx:id="add_btn" text="Add" onAction="#addStaff" />
+                        <Button fx:id="update_btn" text="Update" onAction="#updateStaff" />
+                        <Button fx:id="delete_btn" text="Delete" onAction="#deleteStaff" />
+                        <Button fx:id="clear_btn" text="Clear" onAction="#clearFields" />
                     </HBox>
                 </VBox>
             </TitledPane>
 
-            <!-- Staff Details Section -->
+            <!-- Staff Table -->
             <TitledPane expanded="true" text="Staff Details">
                 <VBox style="-fx-padding: 20;">
                     <TableView fx:id="staff_table" onMouseClicked="#handleTableClick" prefHeight="300.0">
                         <columns>
-                            <TableColumn fx:id="colUserId" text="User ID" prefWidth="150.0" />
-                            <TableColumn fx:id="colUsername" text="Username" prefWidth="200.0" />
-                            <TableColumn fx:id="colPassword" text="Password" prefWidth="200.0" />
-                            <TableColumn fx:id="colUserType" text="User Type" prefWidth="150.0" />
+                            <TableColumn fx:id="colUserId"    text="Staff ID" prefWidth="100.0" />
+                            <TableColumn fx:id="colUsername"  text="Username" prefWidth="150.0" />
+                            <TableColumn fx:id="colPassword"  text="Password" prefWidth="150.0" />
                         </columns>
                     </TableView>
                 </VBox>

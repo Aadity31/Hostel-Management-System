@@ -7,17 +7,15 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.hms.views.users.student.Fees">
 
-    <!-- Root layout fills the whole scene -->
     <VBox spacing="15" padding="20"
           AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
           AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
           style="-fx-background-color:#fbfbfb;">
 
-        <!-- ─────────── Add‑Fees ─────────── -->
+        <!-- Add Fees Panel -->
         <TitledPane text="Add Fees" collapsible="false">
             <content>
-                <GridPane hgap="12" vgap="10" padding="10">
-                    <!-- columns auto‑share width -->
+                <GridPane hgap="12" vgap="10" padding="15">
                     <columnConstraints>
                         <ColumnConstraints percentWidth="15"/>
                         <ColumnConstraints percentWidth="35"/>
@@ -27,50 +25,47 @@
 
                     <Label text="Student ID:"/>
                     <TextField fx:id="txtstuid" GridPane.columnIndex="1"
-                               promptText="Auto‑generated"
-                               GridPane.hgrow="ALWAYS"/>
+                               promptText="Auto-generated" GridPane.hgrow="ALWAYS"/>
 
                     <Label text="Month:" GridPane.columnIndex="2"/>
-                    <ComboBox fx:id="txtmonth"  GridPane.columnIndex="3"
-                              GridPane.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="txtmonth" GridPane.columnIndex="3"
+                              promptText="Select Month" GridPane.hgrow="ALWAYS"/>
 
                     <Label text="Name:" GridPane.rowIndex="1"/>
                     <TextField fx:id="txtname" GridPane.rowIndex="1" GridPane.columnIndex="1"
-                               GridPane.hgrow="ALWAYS"/>
+                               promptText="Full Name" GridPane.hgrow="ALWAYS"/>
 
                     <Label text="Invoice No:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
                     <TextField fx:id="txtinvoice" GridPane.rowIndex="1" GridPane.columnIndex="3"
-                               GridPane.hgrow="ALWAYS"/>
+                               promptText="e.g. INV123" GridPane.hgrow="ALWAYS"/>
 
-                    <Label text="Date:"  GridPane.rowIndex="2"/>
+                    <Label text="Date:" GridPane.rowIndex="2"/>
                     <DatePicker fx:id="add_date" GridPane.rowIndex="2" GridPane.columnIndex="1"
                                 GridPane.hgrow="ALWAYS"/>
 
                     <Label text="Amount:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
                     <TextField fx:id="txtamount" GridPane.rowIndex="2" GridPane.columnIndex="3"
-                               GridPane.hgrow="ALWAYS"/>
+                               promptText="e.g. 10000" GridPane.hgrow="ALWAYS"/>
 
-                    <!-- buttons right‑aligned -->
                     <HBox spacing="10" alignment="CENTER_RIGHT"
                           GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="4">
                         <Button fx:id="add_btn" text="Add Record" onAction="#addRecord"/>
-                        <Button fx:id="clear_btn" text="Clear"      onAction="#clearFields"/>
+                        <Button fx:id="clear_btn" text="Clear" onAction="#clearFields"/>
                     </HBox>
                 </GridPane>
             </content>
         </TitledPane>
 
-        <!-- let Payment pane eat the extra space -->
-        <TitledPane text="Payment Details" collapsible="false"
-                    VBox.vgrow="ALWAYS">
+        <!-- Payment Details Table -->
+        <TitledPane text="Payment Details" collapsible="false" VBox.vgrow="ALWAYS">
             <content>
-                <VBox spacing="10" padding="10">
+                <VBox spacing="10" padding="15">
                     <HBox spacing="10" alignment="CENTER_LEFT">
                         <Label text="Search by Month:"/>
                         <TextField fx:id="txt_search" onKeyReleased="#searchByMonth"
-                                   promptText="Type month" HBox.hgrow="ALWAYS"/>
-                        <Button fx:id="btnreset" text="Reset"        onAction="#resetTable"/>
-                        <Button fx:id="btnpdf"   text="Export PDF"   onAction="#exportToPdf"/>
+                                   promptText="e.g. January" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnreset" text="Reset" onAction="#resetTable"/>
+                        <Button fx:id="btnpdf" text="Export PDF" onAction="#exportToPdf"/>
                         <Button fx:id="btnexcel" text="Export Excel" onAction="#exportToExcel"/>
                     </HBox>
 
@@ -80,11 +75,11 @@
                         </columnResizePolicy>
                         <columns>
                             <TableColumn fx:id="col_student_id" text="Student ID"/>
-                            <TableColumn fx:id="col_name"       text="Name"/>
-                            <TableColumn fx:id="col_date"       text="Date"/>
-                            <TableColumn fx:id="col_month"      text="Month"/>
+                            <TableColumn fx:id="col_name" text="Name"/>
+                            <TableColumn fx:id="col_date" text="Date"/>
+                            <TableColumn fx:id="col_month" text="Month"/>
                             <TableColumn fx:id="col_invoice_no" text="Invoice No"/>
-                            <TableColumn fx:id="col_amount"     text="Amount"/>
+                            <TableColumn fx:id="col_amount" text="Amount"/>
                         </columns>
                     </TableView>
                 </VBox>

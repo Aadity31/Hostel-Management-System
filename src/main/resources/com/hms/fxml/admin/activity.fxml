@@ -1,81 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="647.0" prefWidth="761.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hms.views.users.admin.Activity">
+<AnchorPane prefHeight="647.0" prefWidth="761.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hms.views.users.admin.Activity">
+
     <children>
-        <VBox layoutX="20.0" layoutY="20.0" prefHeight="647.0" prefWidth="761.0" spacing="20.0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0">
-            <children>
-                <!-- Search Panel -->
-                <VBox style="-fx-background-color: #FBFBFB; -fx-border-color: #808080; -fx-border-width: 1px;">
-                    <children>
-                        <Label text="Search" textFill="#202835">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="5.0" left="10.0" top="5.0" />
-                            </VBox.margin>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                            <children>
-                                <Label minWidth="-Infinity" text="User ID:" textFill="#202835">
-                                    <font>
-                                        <Font size="15.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="txt_search" maxWidth="1.7976931348623157E308" onKeyReleased="#onSearchKeyReleased" promptText="Type here to search" HBox.hgrow="ALWAYS">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </TextField>
-                                <Button fx:id="btnreset" minWidth="-Infinity" mnemonicParsing="false" onAction="#onResetClicked" prefWidth="76.0" style="-fx-cursor: hand;" text="Reset">
-                                    <font>
-                                        <Font size="15.0" />
-                                    </font>
-                                </Button>
-                            </children>
-                            <padding>
-                                <Insets bottom="10.0" left="15.0" right="15.0" top="5.0" />
-                            </padding>
-                        </HBox>
-                    </children>
-                </VBox>
-      
-                <!-- User Task Table Panel -->
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="548.0" prefWidth="762.0" style="-fx-background-color: #FBFBFB; -fx-border-color: #808080; -fx-border-width: 1px;">
-                    <children>
-                        <Label text="User Task" textFill="#202835">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="10.0" left="10.0" top="10.0" />
-                            </VBox.margin>
-                        </Label>
-                        <TableView fx:id="tbl_3" prefHeight="502.0" style="-fx-font-size: 14px;">
-                            <columns>
-                                <TableColumn fx:id="colLogsId" prefWidth="240.0" text="Logs ID" />
-                                <TableColumn fx:id="colUserId" prefWidth="240.0" text="User ID" />
-                                <TableColumn fx:id="colDate" prefWidth="240.0" text="Date" />
-                                <TableColumn fx:id="colStatus" prefWidth="240.0" text="Status" />
-                            </columns>
-                            <VBox.margin>
-                                <Insets bottom="24.0" left="24.0" right="24.0" />
-                            </VBox.margin>
-                        </TableView>
-                    </children>
-                </VBox>
-            </children>
+        <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" layoutX="20" layoutY="20">
+
+            <!-- ───── Search Panel ───── -->
+            <VBox style="-fx-background-color:#FBFBFB;-fx-border-color:#808080;-fx-border-width:1;">
+                <Label text="Search" textFill="#202835">
+                    <font><Font name="System Bold" size="18"/></font>
+                    <VBox.margin><Insets top="5" left="10" bottom="5"/></VBox.margin>
+                </Label>
+
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="User Name:" textFill="#202835">
+                        <font><Font size="15"/></font>
+                    </Label>
+                    <TextField fx:id="txt_search" onKeyReleased="#onSearchKeyReleased"
+                               promptText="Type here to search" HBox.hgrow="ALWAYS">
+                        <font><Font size="14"/></font>
+                    </TextField>
+                    <Button fx:id="btnreset" text="Reset" onAction="#onResetClicked"
+                            prefWidth="76" style="-fx-cursor:hand;">
+                        <font><Font size="15"/></font>
+                    </Button>
+                    <padding><Insets top="5" left="15" right="15" bottom="10"/></padding>
+                </HBox>
+            </VBox>
+
+            <!-- ───── Logs Table ───── -->
+            <VBox style="-fx-background-color:#FBFBFB;-fx-border-color:#808080;-fx-border-width:1;"
+                  prefHeight="548" prefWidth="762" maxHeight="1.7976931348623157E308"
+                  maxWidth="1.7976931348623157E308">
+
+                <Label text="User Task" textFill="#202835">
+                    <font><Font name="System Bold" size="18"/></font>
+                    <VBox.margin><Insets top="10" left="10" bottom="10"/></VBox.margin>
+                </Label>
+
+                <TableView fx:id="tbl_3" prefHeight="502" style="-fx-font-size:14;">
+                    <columns>
+                        <TableColumn fx:id="colLogId"    text="Log ID"     prefWidth="180"/>
+                        <TableColumn fx:id="colUserName" text="User Name"  prefWidth="200"/>
+                        <TableColumn fx:id="colDate"     text="Date"       prefWidth="200"/>
+                        <TableColumn fx:id="colStatus"   text="Status"     prefWidth="180"/>
+                    </columns>
+                    <VBox.margin><Insets left="24" right="24" bottom="24"/></VBox.margin>
+                </TableView>
+            </VBox>
         </VBox>
     </children>
 </AnchorPane>

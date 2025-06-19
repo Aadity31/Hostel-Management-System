@@ -21,7 +21,6 @@
                     <image>
                         <Image url="@../../images/hms_header.png" />
                     </image>
-
                 </ImageView>
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="btnProfile" mnemonicParsing="false" onAction="#handleProfileAction" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #00A650; -fx-text-fill: white; -fx-font-weight: bold;" text="Profile">
@@ -32,10 +31,9 @@
                             </image>
                         </ImageView>
                     </graphic>
-               <HBox.margin>
-                  <Insets left="15.0" right="15.0" />
-               </HBox.margin>
-
+                    <HBox.margin>
+                        <Insets left="15.0" right="15.0" />
+                    </HBox.margin>
                 </Button>
                 <Button fx:id="btnLogout" mnemonicParsing="false" onAction="#handleLogoutAction" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #EC1D25; -fx-text-fill: white; -fx-font-weight: bold;" text=" Log out">
                     <graphic>
@@ -45,10 +43,9 @@
                             </image>
                         </ImageView>
                     </graphic>
-               <HBox.margin>
-                  <Insets right="20.0" />
-               </HBox.margin>
-
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
                 </Button>
             </children>
         </HBox>
@@ -70,20 +67,19 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-
                         </Label>
                     </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets top="2.0" />
+                    </VBox.margin>
+                    <padding>
+                        <Insets left="10.0" />
+                    </padding>
                 </HBox>
+
                 <HBox fx:id="btn2" alignment="CENTER_LEFT" onMouseClicked="#handleRoomDetailsClick" prefHeight="44.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
                     <children>
                         <Region fx:id="ind2" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
@@ -98,46 +94,21 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-
                         </Label>
                     </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets top="2.0" />
+                    </VBox.margin>
+                    <padding>
+                        <Insets left="10.0" />
+                    </padding>
                 </HBox>
-                <HBox fx:id="btn3" alignment="CENTER_LEFT" onMouseClicked="#handleRegistrationClick" prefHeight="44.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
-                    <children>
-                        <Region fx:id="ind3" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
-                        <Label text=" Registration" textFill="WHITE">
-                            <font>
-                                <Font name="System Bold" size="18.0" />
-                            </font>
-                            <graphic>
-                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../../images/users_icon.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
 
-                        </Label>
-                    </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-                </HBox>
+                <!-- Registration (btn3) was removed from here -->
+
                 <HBox fx:id="btn4" alignment="CENTER_LEFT" onMouseClicked="#handleStudentFeesClick" prefHeight="44.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
                     <children>
                         <Region fx:id="ind4" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
@@ -152,19 +123,19 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-
                         </Label>
                     </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets top="2.0" />
+                    </VBox.margin>
+                    <padding>
+                        <Insets left="10.0" />
+                    </padding>
                 </HBox>
+
                 <HBox fx:id="btn5" alignment="CENTER_LEFT" onMouseClicked="#handleHostelRulesClick" prefHeight="44.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
                     <children>
                         <Region fx:id="ind5" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
@@ -179,19 +150,19 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-
                         </Label>
                     </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets top="2.0" />
+                    </VBox.margin>
+                    <padding>
+                        <Insets left="10.0" />
+                    </padding>
                 </HBox>
+
                 <HBox fx:id="btn6" alignment="CENTER_LEFT" onMouseClicked="#handleHostelContactsClick" prefHeight="44.0" prefWidth="240.0" style="-fx-cursor: hand; -fx-background-color: #191B52;">
                     <children>
                         <Region fx:id="ind6" prefHeight="43.0" prefWidth="3.0" style="-fx-background-color: transparent;" />
@@ -206,20 +177,18 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-
                         </Label>
                     </children>
-               <VBox.margin>
-                  <Insets top="2.0" />
-               </VBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
+                    <VBox.margin>
+                        <Insets top="2.0" />
+                    </VBox.margin>
+                    <padding>
+                        <Insets left="10.0" />
+                    </padding>
                 </HBox>
+
                 <Region VBox.vgrow="ALWAYS" />
+
                 <HBox alignment="CENTER" onMouseClicked="#handleAboutClick" prefHeight="60.0" prefWidth="240.0" style="-fx-background-color: #0E5651; -fx-cursor: hand;">
                     <children>
                         <Label alignment="CENTER" contentDisplay="RIGHT" prefHeight="30.0" prefWidth="140.0" text="About HMS " textFill="WHITE">
@@ -233,14 +202,13 @@
                                     </image>
                                 </ImageView>
                             </graphic>
-
                         </Label>
                     </children>
                 </HBox>
             </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
         </VBox>
     </left>
     <center>

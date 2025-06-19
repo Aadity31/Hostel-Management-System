@@ -1,6 +1,7 @@
 package com.hms.views.auth;
 
 import com.hms.utils.DB;
+import com.hms.views.auth.Session;
 import com.hms.utils.Emp;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -125,14 +126,15 @@ public class Login implements Initializable {
                 ps.setString(1, username);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    int userId = rs.getInt(1); // Assuming 'student_id' or 'staff_id'
+                    int userId = rs.getInt(1);
+                    Session.setLoggedInStudentId(userId);
 
-                    String sql = "INSERT INTO logs (User_id, Login_Date, Status) VALUES (?, ?, ?)";
+                    String sql = "INSERT INTO logs (User_name, Date, Status) VALUES (?, ?, ?)";
                     try (PreparedStatement p = conn.prepareStatement(sql)) {
-                        p.setInt(1, userId);
+                        p.setString(1, username);
                         p.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                         p.setString(3, "Logged in");
-                        p.execute();
+                        p.executeUpdate();
                     }
                 }
             }
@@ -140,6 +142,7 @@ public class Login implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Logging Error", ex.getMessage());
         }
     }
+
 
 
     /* ───────── OPEN DASHBOARD ───────── */

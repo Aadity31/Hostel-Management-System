@@ -11,300 +11,108 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
+import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ManageStaff implements Initializable {
 
-    @FXML private TextField txtuserid;
-    @FXML private TextField txtusername;
-    @FXML private TextField txtpassword;
-    @FXML private ComboBox<String> txtusertype;
-    @FXML private Button add_btn;
-    @FXML private Button update_btn;
-    @FXML private Button delete_btn;
-    @FXML private Button clear_btn;
+    @FXML private TextField txtuserid, txtusername, txtpassword;
+    @FXML private Button add_btn, update_btn, delete_btn, clear_btn;
     @FXML private TableView<StaffRecord> staff_table;
-    @FXML private TableColumn<StaffRecord, Integer> colUserId;
-    @FXML private TableColumn<StaffRecord, String> colUsername;
-    @FXML private TableColumn<StaffRecord, String> colPassword;
-    @FXML private TableColumn<StaffRecord, String> colUserType;
+    @FXML private TableColumn<StaffRecord,Integer> colUserId;
+    @FXML private TableColumn<StaffRecord,String>  colUsername,colPassword;
 
-    private Connection conn = null;
-    private ResultSet rs = null;
-    private PreparedStatement pst = null;
-    private ObservableList<StaffRecord> staffData = FXCollections.observableArrayList();
+    private Connection conn;
+    private final ObservableList<StaffRecord> staffData = FXCollections.observableArrayList();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Initialize database connection
+    @Override public void initialize(URL url, ResourceBundle rb) {
         conn = DB.connect();
-
-        // Setup table columns
-        setupTableColumns();
-
-        ObservableList<String> userTypes = FXCollections.observableArrayList("Select", "Staff");
-        txtusertype.setItems(userTypes);
-        // Initialize ComboBox
-        txtusertype.setValue("Select");
-
-        // Load initial data
-        updateTable();
-
-        // Set focus to username field
+        setupTable();
+        refreshTable();
         txtusername.requestFocus();
-
-        // Disable user ID field
         txtuserid.setDisable(true);
     }
 
-    private void setupTableColumns() {
-        colUserId.setCellValueFactory(new PropertyValueFactory<>("userId"));
+    private void setupTable(){
+        colUserId  .setCellValueFactory(new PropertyValueFactory<>("userId"));
         colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         colPassword.setCellValueFactory(new PropertyValueFactory<>("password"));
-        colUserType.setCellValueFactory(new PropertyValueFactory<>("userType"));
-
         staff_table.setItems(staffData);
     }
 
-    private void updateTable() {
+    private void refreshTable(){
         staffData.clear();
-        try {
-            String sql = "SELECT * FROM staff WHERE User_type = 'Staff'";
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
+        String sql="SELECT * FROM staff";
+        try(PreparedStatement p=conn.prepareStatement(sql); ResultSet r=p.executeQuery()){
+            while(r.next()) staffData.add(new StaffRecord(
+                    r.getInt("staff_id"), r.getString("username"), r.getString("password")));
+        }catch(SQLException e){error("DB Error",e.getMessage());}
+    }
 
-            while (rs.next()) {
-                StaffRecord record = new StaffRecord(
-                        rs.getInt("Staff_id"),
-                        rs.getString("Username"),
-                        rs.getString("Password"),
-                        rs.getString("User_type")
-                );
-                staffData.add(record);
-            }
-        } catch (SQLException e) {
-            showErrorAlert("Database Error", e.getMessage());
-        } finally {
-            closeResources();
+    @FXML private void addStaff(){
+        if(!validateInputs()) return;
+        String sql="INSERT INTO staff (username,password) VALUES (?,?)";
+        try(PreparedStatement p=conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+            p.setString(1,txtusername.getText()); p.setString(2,txtpassword.getText());
+            p.executeUpdate();
+            info("New staff account created.");
+            log("Added new staff account");
+            try(ResultSet g=p.getGeneratedKeys()){ if(g.next()) txtuserid.setText(String.valueOf(g.getInt(1))); }
+            refreshTable(); clearFields();
+        }catch(SQLException e){error("DB Error",e.getMessage());}
+    }
+
+    @FXML private void updateStaff(){
+        if(!validateAll()) return;
+        if(confirm("Update Record","Update this staff account?")){
+            String sql="UPDATE staff SET username=?, password=? WHERE staff_id=?";
+            try(PreparedStatement p=conn.prepareStatement(sql)){
+                p.setString(1,txtusername.getText()); p.setString(2,txtpassword.getText()); p.setInt(3,Integer.parseInt(txtuserid.getText()));
+                p.executeUpdate();
+                info("Staff account updated."); log("Updated staff account"); refreshTable();
+            }catch(SQLException e){error("DB Error",e.getMessage());}
         }
     }
 
-    @FXML
-    private void addStaff() {
-        if (validateFields()) {
-            try {
-                String sql = "INSERT INTO logs (Staff_id, Login_Date, Status) VALUES (?, ?, ?)";
-                pst = conn.prepareStatement(sql);
-                pst.setString(1, txtusername.getText());
-                pst.setString(2, txtpassword.getText());
-                pst.setString(3, txtusertype.getValue());
-
-                pst.execute();
-                showInfoAlert("New Staff Account Created");
-
-                // Log the action
-                logAction("New Staff Account Created");
-
-                updateTable();
-                clearFields();
-
-            } catch (SQLException e) {
-                showErrorAlert("Database Error", e.getMessage());
-            } finally {
-                closeResources();
-            }
-        } else {
-            showErrorAlert("Validation Error", "One or more required fields are empty");
+    @FXML private void deleteStaff(){
+        if(!validateAll()) return;
+        if(confirm("Delete Account","Delete this staff account?")){
+            log("Deleted staff account");
+            String sql="DELETE FROM staff WHERE staff_id=?";
+            try(PreparedStatement p=conn.prepareStatement(sql)){
+                p.setInt(1,Integer.parseInt(txtuserid.getText())); p.executeUpdate();
+                info("Staff account removed."); refreshTable(); clearFields();
+            }catch(SQLException e){error("DB Error",e.getMessage());}
         }
     }
 
-    @FXML
-    private void updateStaff() {
-        if (validateAllFields()) {
-            Optional<ButtonType> result = showConfirmationAlert("Update Record",
-                    "Are you sure you want to update this record?");
+    @FXML private void clearFields(){ txtuserid.clear(); txtusername.clear(); txtpassword.clear(); txtusername.requestFocus(); }
 
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    String sql = "UPDATE user SET Username=?, Password=?, User_type=? WHERE Staff_id=?";
-                    pst = conn.prepareStatement(sql);
-                    pst.setString(1, txtusername.getText());
-                    pst.setString(2, txtpassword.getText());
-                    pst.setString(3, txtusertype.getValue());
-                    pst.setString(4, txtuserid.getText());
-
-                    pst.execute();
-                    showInfoAlert("Account Updated");
-
-                    // Log the action
-                    logAction("Staff Details Updated");
-
-                    updateTable();
-
-                } catch (SQLException e) {
-                    showErrorAlert("Database Error", e.getMessage());
-                } finally {
-                    closeResources();
-                }
-            }
-        } else {
-            showErrorAlert("Validation Error", "One or more required fields are empty");
-        }
+    @FXML private void handleTableClick(MouseEvent e){
+        StaffRecord s=staff_table.getSelectionModel().getSelectedItem();
+        if(s==null) return; txtuserid.setText(String.valueOf(s.getUserId())); txtusername.setText(s.getUsername()); txtpassword.setText(s.getPassword());
     }
 
-    @FXML
-    private void deleteStaff() {
-        if (validateAllFields()) {
-            Optional<ButtonType> result = showConfirmationAlert("Delete Account",
-                    "Are you sure you want to delete this account?");
+    private boolean validateInputs(){ if(txtusername.getText().isBlank()||txtpassword.getText().isBlank()){ error("Validation","Fill all required fields"); return false;} return true; }
+    private boolean validateAll(){ return validateInputs() && !txtuserid.getText().isBlank(); }
 
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    // Log the action first
-                    logAction("Staff Account Removed");
-
-                    String sql = "DELETE FROM user WHERE Staff_id=?";
-                    pst = conn.prepareStatement(sql);
-                    pst.setString(1, txtuserid.getText());
-                    pst.execute();
-
-                    showInfoAlert("Account Removed");
-                    updateTable();
-                    clearFields();
-
-                } catch (SQLException e) {
-                    showErrorAlert("Database Error", e.getMessage());
-                } finally {
-                    closeResources();
-                }
-            }
-        } else {
-            showErrorAlert("Validation Error", "One or more required fields are empty");
-        }
+    private void log(String action){
+        String sql="INSERT INTO logs (User_id,Date,Status) VALUES (?,?,?)";
+        String timestamp=new SimpleDateFormat("HH:mm:ss / dd-MMM-yyyy").format(new java.util.Date());
+        try(PreparedStatement p=conn.prepareStatement(sql)){
+            p.setInt(1,Emp.UserId); p.setString(2,timestamp); p.setString(3,action); p.execute();
+        }catch(SQLException ignored){}
     }
 
-    @FXML
-    private void clearFields() {
-        txtuserid.clear();
-        txtusername.clear();
-        txtpassword.clear();
-        txtusertype.setValue("Select");
-        txtusername.requestFocus();
-    }
+    private void info(String m){ Alert a=new Alert(Alert.AlertType.INFORMATION,m, ButtonType.OK); a.setHeaderText(null); a.showAndWait(); }
+    private void error(String t,String m){ Alert a=new Alert(Alert.AlertType.ERROR,m,ButtonType.OK); a.setTitle(t); a.setHeaderText(null); a.showAndWait(); }
+    private boolean confirm(String t,String m){ Alert a=new Alert(Alert.AlertType.CONFIRMATION,m,ButtonType.OK,ButtonType.CANCEL); a.setTitle(t); a.setHeaderText(null); Optional<ButtonType> r=a.showAndWait(); return r.isPresent()&&r.get()==ButtonType.OK; }
 
-    @FXML
-    private void handleTableClick(MouseEvent event) {
-        StaffRecord selectedRecord = staff_table.getSelectionModel().getSelectedItem();
-        if (selectedRecord != null) {
-            txtuserid.setText(String.valueOf(selectedRecord.getUserId()));
-            txtusername.setText(selectedRecord.getUsername());
-            txtpassword.setText(selectedRecord.getPassword());
-            txtusertype.setValue(selectedRecord.getUserType());
-        }
-    }
-
-    private boolean validateFields() {
-        return !txtusertype.getValue().equals("Select") &&
-                !txtusername.getText().trim().isEmpty() &&
-                !txtpassword.getText().trim().isEmpty();
-    }
-
-    private boolean validateAllFields() {
-        return validateFields() && !txtuserid.getText().trim().isEmpty();
-    }
-
-    private void logAction(String action) {
-        try {
-            Date currentDate = GregorianCalendar.getInstance().getTime();
-            DateFormat df = DateFormat.getDateInstance();
-            String dateString = df.format(currentDate);
-
-            Date d = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            String timeString = sdf.format(d);
-
-            String timestamp = timeString + " / " + dateString;
-            int userId = Emp.UserId;
-
-            String sql = "INSERT INTO logs (Staff_id, Date, Status) VALUES (?, ?, ?)";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1, userId);
-            pst.setString(2, timestamp);
-            pst.setString(3, action);
-            pst.execute();
-
-        } catch (SQLException e) {
-            showErrorAlert("Logging Error", e.getMessage());
-        }
-    }
-
-    private void closeResources() {
-        try {
-            if (rs != null) rs.close();
-            if (pst != null) pst.close();
-        } catch (SQLException e) {
-            showErrorAlert("Resource Error", e.getMessage());
-        }
-    }
-
-    private void showInfoAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showErrorAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private Optional<ButtonType> showConfirmationAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        return alert.showAndWait();
-    }
-
-    // Inner class for table data
-    public static class StaffRecord {
-        private int userId;
-        private String username;
-        private String password;
-        private String userType;
-
-        public StaffRecord(int userId, String username, String password, String userType) {
-            this.userId = userId;
-            this.username = username;
-            this.password = password;
-            this.userType = userType;
-        }
-
-        // Getters and setters
-        public int getUserId() { return userId; }
-        public void setUserId(int userId) { this.userId = userId; }
-
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-
-        public String getUserType() { return userType; }
-        public void setUserType(String userType) { this.userType = userType; }
+    public static class StaffRecord{
+        private final int userId; private final String username,password;
+        public StaffRecord(int id,String un,String pw){ userId=id; username=un; password=pw; }
+        public int getUserId(){return userId;} public String getUsername(){return username;} public String getPassword(){return password;}
     }
 }

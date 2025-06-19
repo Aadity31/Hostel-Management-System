@@ -1,6 +1,7 @@
 package com.hms.views.users.admin;
 
 import com.hms.utils.DB;
+import com.hms.views.auth.Session;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -239,7 +241,8 @@ public class Dashboard extends Application implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            logUserActivity("Logged out");
+        	String userId = String.valueOf(Session.getLoggedInStudentId());
+            logUserActivity(userId, "logs");
 
             try {
                 Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/hms/fxml/login.fxml")));
@@ -345,44 +348,29 @@ public class Dashboard extends Application implements Initializable {
         alert.showAndWait();
     }
 
-    private void logUserActivity(String activity) {
+    private void logUserActivity(String username, String table) {
         try {
-            if (conn != null) {
-                // Get current datetime in correct format for MySQL
-                LocalDateTime now = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String timestamp = now.format(formatter);
+        	String getIdSql = "SELECT student_id FROM " + table + " WHERE Username=?";
+            try (PreparedStatement ps = conn.prepareStatement(getIdSql)) {
+                ps.setString(1, username);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    Session.clear();
 
-                // Get user ID (you need to define getUserId() properly)
-                int userId = getUserId();
-
-                // Prepare SQL query
-                String query = "INSERT INTO logs (User_id, Login_Date, Status) VALUES (?, ?, ?)";
-                pst = conn.prepareStatement(query);
-                pst.setInt(1, userId);
-                pst.setString(2, timestamp);  // Format matches DATETIME column
-                pst.setString(3, activity);
-                pst.execute();
+                    String sql = "INSERT INTO logs (User_name, Date, Status) VALUES (?, ?, ?)";
+                    try (PreparedStatement p = conn.prepareStatement(sql)) {
+                        p.setString(1, username);
+                        p.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                        p.setString(3, "Logged out");
+                        p.executeUpdate();
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Database Error", "Failed to log user activity: " + e.getMessage(), Alert.AlertType.ERROR);
-        } finally {
-            try {
-                if (pst != null) {
-                    pst.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private int getUserId() {
-        // Return the current user ID
-        // This should be implemented based on your login system
-        // For now, returning a placeholder
-        return 1; // Replace with actual user ID retrieval
+        } 
+        
     }
 
     public static String getCurrentDateTime(String format) {
